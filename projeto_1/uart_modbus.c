@@ -79,14 +79,16 @@ short CRC16(short crc, char data){
     return ((crc & 0xFF00) >> 8) ^ tbl[(crc & 0x00FF) ^ (data & 0x00FF)];
 }
 
-void escreve_na_uart(int quantidade_de_bytes){
-    printf("Escrevendo na UART...\n");
+void escreve_na_uart(int quantidade_de_bytes, int info){
+    if(info != 0) printf("Escrevendo na UART...\n");
     int count = write(uart_filestream, &tx_buffer[0], quantidade_de_bytes);
     
     if(count < 0){
         printf("Ocorreu um erro ao escrever na UART. Encerrando...\n");
         exit(2);
-    } else{
+    }
+
+    if(info != 0){
         printf("Dados escritos na UART.\n");
         printf("Valor escrito: ");
         for(int i = 0; i < quantidade_de_bytes; i++) printf("0x%x ", tx_buffer[i]);
@@ -94,8 +96,8 @@ void escreve_na_uart(int quantidade_de_bytes){
     }
 }
 
-void le_na_uart(){
-    printf("Aguardando resposta...\n");
+void le_na_uart(int info){
+    if(info != 0) printf("Aguardando resposta...\n");
     sleep(1);
     
     int rx_length = read(uart_filestream, (void*)rx_buffer, 255);
@@ -109,8 +111,10 @@ void le_na_uart(){
         printf("Nenhuma resposta obtida.\n");
         exit(4);
     } 
-    else {
-        rx_buffer[rx_length] = '\0';
+
+    rx_buffer[rx_length] = '\0';
+
+    if(info != 0){
         printf("%i bytes lidos: ", rx_length, rx_buffer);
         for(int i = 0; i < rx_length; i++) printf("0x%x ", rx_buffer[i]);
         printf("\n");
@@ -286,17 +290,26 @@ void converte_pacote_em_string(){
     string_convertida[tamanho_da_string+1] = '\0';
 }
 
-int main(){
+void clear_buffer(){
+    p_tx_buffer = &tx_buffer[0];
+}
 
-    configura_uart();
+float get_LM35_reading(){
+    clear_buffer();
+    solicita_leitura_sensor_LM35();
+    escreve_na_uart(tamanho_do_pacote, 0);
+    le_na_uart(0);
+    return converte_pacote_em_float();
+}
+
+float get_potenciometro_reading(){
+    clear_buffer();
     solicita_leitura_potenciometro();
-    escreve_na_uart(tamanho_do_pacote);
-    le_na_uart();
+    escreve_na_uart(tamanho_do_pacote, 0);
+    le_na_uart(0);
+    return converte_pacote_em_float();
+}
 
-    float valor_lido = converte_pacote_em_float();
-    printf("Temperatura fornecida pelo potenciometro = %.2f °C\n", valor_lido);
-
+void close_uart(){
     close(uart_filestream);
-
-    return 0;
 }
