@@ -7,17 +7,19 @@
 #include <termios.h>
 #include <unistd.h>
 
-#define ENDERECO        0x01
+#define ENDERECO                        0x01
 
-#define RECEBER         0x23
-#define RECEBER_INT     0xA1
-#define RECEBER_FLOAT   0xA2
-#define RECEBER_STRING  0xA3
+#define RECEBER                         0x23
+#define RECEBER_INT                     0xA1
+#define RECEBER_FLOAT                   0xA2
+#define RECEBER_STRING                  0xA3
+#define RECEBER_VALOR_LM35              0xC1
+#define RECEBER_VALOR_POTENCIOMETRO     0xC2
 
-#define ENVIAR          0x16
-#define ENVIAR_INT      0xB1
-#define ENVIAR_FLOAT    0xB2
-#define ENVIAR_STRING   0xB3
+#define ENVIAR                          0x16
+#define ENVIAR_INT                      0xB1
+#define ENVIAR_FLOAT                    0xB2
+#define ENVIAR_STRING                   0xB3
 
 unsigned char tx_buffer[200];
 unsigned char *p_tx_buffer;
@@ -29,8 +31,7 @@ int uart_filestream;
 char* string_convertida[100];
 int tamanho_do_pacote = 0;
 
-typedef union
-{
+typedef union{
     int inteiro;
     float flutuante;
     unsigned char bytes[4];
@@ -116,9 +117,6 @@ void le_na_uart(){
     }
 }
 
-// TODO: conversor decimal - hexadecimal
-void convert_dec_to_hex(){}
-
 void configura_uart(){
     uart_filestream = open("/dev/serial0", O_RDWR | O_NOCTTY | O_NDELAY);
 
@@ -172,6 +170,21 @@ void solicita_float(){
     *p_tx_buffer++ = RECEBER_FLOAT;
 
     tamanho_do_pacote = 3;
+    call_calcula_CRC(tamanho_do_pacote);
+}
+
+void solicita_leitura_sensor_LM35(){
+    *p_tx_buffer++ = ENDERECO;
+    *p_tx_buffer++ = RECEBER;
+    *p_tx_buffer++ = RECEBER_VALOR_LM35;
+
+    // enviar 4 ultimos dígitos da matrícula
+    *p_tx_buffer++ = 0x04;
+    *p_tx_buffer++ = 0x03;
+    *p_tx_buffer++ = 0x08;
+    *p_tx_buffer++ = 0x06;
+
+    tamanho_do_pacote = 7;
     call_calcula_CRC(tamanho_do_pacote);
 }
 
@@ -261,12 +274,12 @@ void converte_pacote_em_string(){
 int main(){
 
     configura_uart();
-    envia_string();
+    solicita_leitura_sensor_LM35();
     escreve_na_uart(tamanho_do_pacote);
     le_na_uart();
 
-    converte_pacote_em_string();
-    printf("String recebida = %s\n", string_convertida);
+    float valor_lido = converte_pacote_em_float();
+    printf("Temperatura fornecida pelo sensor LM35 = %.2f °C\n", valor_lido);
 
     close(uart_filestream);
 
