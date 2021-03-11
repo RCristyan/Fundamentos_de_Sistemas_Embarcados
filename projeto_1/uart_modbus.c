@@ -188,6 +188,21 @@ void solicita_leitura_sensor_LM35(){
     call_calcula_CRC(tamanho_do_pacote);
 }
 
+void solicita_leitura_potenciometro(){
+    *p_tx_buffer++ = ENDERECO;
+    *p_tx_buffer++ = RECEBER;
+    *p_tx_buffer++ = RECEBER_VALOR_POTENCIOMETRO;
+
+    // enviar 4 ultimos dígitos da matrícula
+    *p_tx_buffer++ = 0x04;
+    *p_tx_buffer++ = 0x03;
+    *p_tx_buffer++ = 0x08;
+    *p_tx_buffer++ = 0x06;
+
+    tamanho_do_pacote = 7;
+    call_calcula_CRC(tamanho_do_pacote);
+}
+
 void solicita_string(){
     *p_tx_buffer++ = ENDERECO;
     *p_tx_buffer++ = RECEBER;
@@ -274,12 +289,12 @@ void converte_pacote_em_string(){
 int main(){
 
     configura_uart();
-    solicita_leitura_sensor_LM35();
+    solicita_leitura_potenciometro();
     escreve_na_uart(tamanho_do_pacote);
     le_na_uart();
 
     float valor_lido = converte_pacote_em_float();
-    printf("Temperatura fornecida pelo sensor LM35 = %.2f °C\n", valor_lido);
+    printf("Temperatura fornecida pelo potenciometro = %.2f °C\n", valor_lido);
 
     close(uart_filestream);
 
