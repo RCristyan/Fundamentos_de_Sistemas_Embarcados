@@ -1,5 +1,5 @@
-executable: uart_modbus i2c_read_bme bme main.o
-	gcc main.o uart_modbus.o i2c_read_bme280.o bme.o -o executable.o
+executable: uart_modbus i2c_read_bme bme main i2c_lcd_write
+	gcc main.o uart_modbus.o i2c_read_bme280.o bme.o i2c_lcd_write.o -o executable.o -l wiringPi
 
 main: main.c
 	gcc -c main.c -o main.o
@@ -12,6 +12,9 @@ i2c_read_bme: i2c_read_bme280.c
 
 bme: bme.c
 	gcc -c bme.c -o bme.o
+
+i2c_lcd_write: i2c_lcd_write.c
+	gcc -c i2c_lcd_write.c -o i2c_lcd_write.o -l wiringPi
 
 clean:
 	rm *.o
