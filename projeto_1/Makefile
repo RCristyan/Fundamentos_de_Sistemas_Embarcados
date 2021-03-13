@@ -1,5 +1,7 @@
 executable: uart_modbus i2c_read_bme bme main i2c_lcd_write logger
-	gcc main.o uart_modbus.o i2c_read_bme280.o bme.o i2c_lcd_write.o logger.o -o executable.o -l wiringPi
+	gcc main.o uart_modbus.o i2c_read_bme280.o \
+	    bme.o i2c_lcd_write.o logger.o \
+		-o executable.o -l wiringPi
 
 main: main.c
 	gcc -c main.c -o main.o
