@@ -7,5 +7,6 @@
 void configura_i2c_lcd();
 void lcd_write(int line, char string[20], int delay_ms);
 void clear_lcd();
+void write_values(float TI, float TE, float TR);
 
 #endif
