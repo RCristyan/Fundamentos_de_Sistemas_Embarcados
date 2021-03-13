@@ -63,7 +63,7 @@ void clear_lcd(){
     ClrLcd();
 }
 
-void write_values(float TI, float TE, float TR){
+void write_values_on_lcd(float TI, float TE, float TR){
     char ti_buffer[20];
     char te_buffer[20];
     char tr_buffer[20];
