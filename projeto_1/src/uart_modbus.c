@@ -6,6 +6,7 @@
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
+#include <signal.h>
 
 #define ENDERECO                        0x01
 
@@ -96,10 +97,16 @@ void escreve_na_uart(int quantidade_de_bytes, int info){
     }
 }
 
+void wakeup(){
+    // do_nothing
+}
+
 void le_na_uart(int info){
     if(info != 0) printf("Aguardando resposta...\n");
-    sleep(1);
+
+    pause();
     
+    // a leitura do valor pela uart parece ser um gargalo de desempenho...
     int rx_length = read(uart_filestream, (void*)rx_buffer, 255);
     int errnum;
 
@@ -295,18 +302,26 @@ void clear_buffer(){
 }
 
 float get_LM35_reading(){
+    alarm(1);
+    signal(SIGALRM, wakeup);
+
     clear_buffer();
     solicita_leitura_sensor_LM35();
     escreve_na_uart(tamanho_do_pacote, 0);
     le_na_uart(0);
+
     return converte_pacote_em_float();
 }
 
 float get_potenciometro_reading(){
+    alarm(1);
+    signal(SIGALRM, wakeup);
+
     clear_buffer();
     solicita_leitura_potenciometro();
     escreve_na_uart(tamanho_do_pacote, 0);
     le_na_uart(0);
+
     return converte_pacote_em_float();
 }
 
