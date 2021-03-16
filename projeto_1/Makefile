@@ -1,25 +1,31 @@
+INCLUDE_PATH?=-I./include
+SRC_PATH?=./src/
+OBJECT_PATH?=./object/
+
 executable: uart_modbus i2c_read_bme bme main i2c_lcd_write logger
-	gcc main.o uart_modbus.o i2c_read_bme280.o \
-	    bme.o i2c_lcd_write.o logger.o \
-		-o executable.o -l wiringPi
+	gcc $(OBJECT_PATH)main.o $(OBJECT_PATH)uart_modbus.o \
+		$(OBJECT_PATH)i2c_read_bme280.o $(OBJECT_PATH)bme.o \
+		$(OBJECT_PATH)i2c_lcd_write.o $(OBJECT_PATH)logger.o \
+		-o executable -l wiringPi
 
-main: ./src/main.c
-	gcc -I./include -c ./src/main.c -o main.o
+main: $(SRC_PATH)main.c
+	gcc $(INCLUDE_PATH) -c $(SRC_PATH)main.c -o $(OBJECT_PATH)main.o
 
-uart_modbus: ./src/uart_modbus.c
-	gcc -c ./src/uart_modbus.c -o uart_modbus.o
+uart_modbus: $(SRC_PATH)uart_modbus.c
+	gcc -c $(SRC_PATH)uart_modbus.c -o $(OBJECT_PATH)uart_modbus.o
 
-i2c_read_bme: ./src/i2c_read_bme280.c
-	gcc -I./include -c ./src/i2c_read_bme280.c -o i2c_read_bme280.o
+i2c_read_bme: $(SRC_PATH)i2c_read_bme280.c
+	gcc $(INCLUDE_PATH) -c $(SRC_PATH)i2c_read_bme280.c -o $(OBJECT_PATH)i2c_read_bme280.o
 
-bme: ./src/bme.c
-	gcc -c ./src/bme.c -o bme.o
+bme: $(SRC_PATH)bme.c
+	gcc -c $(SRC_PATH)bme.c -o $(OBJECT_PATH)bme.o
 
-i2c_lcd_write: ./src/i2c_lcd_write.c
-	gcc -I./include -c ./src/i2c_lcd_write.c -o i2c_lcd_write.o -l wiringPi
+i2c_lcd_write: $(SRC_PATH)i2c_lcd_write.c
+	gcc $(INCLUDE_PATH) -c $(SRC_PATH)i2c_lcd_write.c -o $(OBJECT_PATH)i2c_lcd_write.o -l wiringPi
 
-logger: ./src/logger.c
-	gcc -I./include -c ./src/logger.c -o logger.o
+logger: $(SRC_PATH)logger.c
+	gcc $(INCLUDE_PATH) -c $(SRC_PATH)logger.c -o $(OBJECT_PATH)logger.o
 
 clean:
-	rm *.o
+	rm ./executable
+	rm ./object/*.o
