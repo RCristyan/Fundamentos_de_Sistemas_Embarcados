@@ -2,11 +2,12 @@ INCLUDE_PATH?=-I./include
 SRC_PATH?=./src/
 OBJECT_PATH?=./object/
 
-executable: uart_modbus i2c_read_bme bme main i2c_lcd_write logger
+executable: uart_modbus i2c_read_bme bme main i2c_lcd_write logger gpio
 	gcc $(OBJECT_PATH)main.o $(OBJECT_PATH)uart_modbus.o \
 		$(OBJECT_PATH)i2c_read_bme280.o $(OBJECT_PATH)bme.o \
 		$(OBJECT_PATH)i2c_lcd_write.o $(OBJECT_PATH)logger.o \
-		-o executable -l wiringPi
+		$(OBJECT_PATH)gpio.o \
+		-o executable -lwiringPi
 
 main: $(SRC_PATH)main.c
 	gcc $(INCLUDE_PATH) -c $(SRC_PATH)main.c -o $(OBJECT_PATH)main.o
@@ -26,6 +27,9 @@ i2c_lcd_write: $(SRC_PATH)i2c_lcd_write.c
 logger: $(SRC_PATH)logger.c
 	gcc $(INCLUDE_PATH) -c $(SRC_PATH)logger.c -o $(OBJECT_PATH)logger.o
 
+gpio: $(SRC_PATH)gpio.c
+	gcc $(INCLUDE_PATH) -c $(SRC_PATH)gpio.c -o $(OBJECT_PATH)gpio.o -lwiringPi -lpthread
+
 clean:
-	rm ./executable
 	rm ./object/*.o
+	rm ./executable
