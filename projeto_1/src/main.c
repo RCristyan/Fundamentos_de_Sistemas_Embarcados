@@ -8,6 +8,7 @@
 #include "i2c_lcd_write.h"
 #include "logger.h"
 #include "gpio.h"
+#include "pid.h"
 
 void encerrar_processo(){
     printf("\n");
@@ -31,11 +32,14 @@ int main(){
     
     signal(SIGINT, encerrar_processo);
 
+    pid_configura_constantes(10.0, 1.0, 5.0);
+
     float TI, TE, TR;
     float p, u;
     int intensidade_ventoinha = 0;
     int intensidade_resistor = 0;
     int direction = 1;
+    double retorno_pid = 0;
 
     while(1){
         TI = get_LM35_reading();
@@ -50,24 +54,26 @@ int main(){
         printf("TI\tTE\tTR\tVentoinha(%%)\tResistor(%%)\n");
         printf("%.2f\t%.2f\t%.2f\t", TI, TE, TR);
         printf("%d\t\t%d\n", intensidade_ventoinha, intensidade_resistor);
-        printf("---------------------------------------\n");
-
+        printf("----------\n");
+        
         // calcular pid aqui
-        // passar valor calculado para gpio
+        // se valor retornado < 0, ligar ventoinha
+        // se valor retornado > 0, ligar resistor
 
-        write_PWM(VENTOINHA, intensidade_ventoinha);
-        write_PWM(RESISTOR, intensidade_resistor);
-        intensidade_ventoinha += 20 * direction;
+        pid_atualiza_referencia(TR);
+        retorno_pid = pid_controle(TI);
 
-        if(intensidade_ventoinha > 100){
-            intensidade_ventoinha = 100;
-            direction = -1;
-        } else if(intensidade_ventoinha < 0){
+        if(retorno_pid < 0){
+            intensidade_ventoinha = -1 * retorno_pid;
+            intensidade_resistor = 0;
+        } else if(retorno_pid >= 0){
             intensidade_ventoinha = 0;
-            direction = 1;
+            intensidade_resistor = retorno_pid;
         }
 
-        intensidade_resistor = intensidade_ventoinha;
+        // passar valor calculado para gpio
+        write_PWM(VENTOINHA, intensidade_ventoinha);
+        write_PWM(RESISTOR, intensidade_resistor);
     }
 
     return 0;
