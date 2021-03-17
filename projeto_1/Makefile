@@ -3,11 +3,7 @@ SRC_PATH?=./src/
 OBJECT_PATH?=./object/
 
 executable: uart_modbus i2c_read_bme bme main i2c_lcd_write logger gpio pid
-	gcc $(OBJECT_PATH)main.o $(OBJECT_PATH)uart_modbus.o \
-		$(OBJECT_PATH)i2c_read_bme280.o $(OBJECT_PATH)bme.o \
-		$(OBJECT_PATH)i2c_lcd_write.o $(OBJECT_PATH)logger.o \
-		$(OBJECT_PATH)gpio.o $(OBJECT_PATH)pid.o \
-		-o executable -lwiringPi
+	gcc $(OBJECT_PATH)*.o -o executable -lwiringPi
 
 main: $(SRC_PATH)main.c
 	gcc $(INCLUDE_PATH) -c $(SRC_PATH)main.c -o $(OBJECT_PATH)main.o
