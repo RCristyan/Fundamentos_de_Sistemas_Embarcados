@@ -2,6 +2,9 @@ INCLUDE_PATH?=-I./include
 SRC_PATH?=./src/
 OBJECT_PATH?=./object/
 
+run: executable
+	./executable
+
 executable: uart_modbus i2c_read_bme bme main i2c_lcd_write logger gpio pid
 	gcc $(OBJECT_PATH)*.o -o executable -lwiringPi
 
