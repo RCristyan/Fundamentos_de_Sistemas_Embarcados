@@ -1,7 +1,10 @@
 import matplotlib.pyplot as plt
 import csv
+import sys
 
-with open('../test_log.txt') as csv_file:
+log_file = sys.argv[1]
+
+with open(log_file) as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     internal_temperature = []
