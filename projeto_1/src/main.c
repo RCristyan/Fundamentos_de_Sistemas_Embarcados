@@ -23,7 +23,7 @@ void encerrar_processo(){
 }
 
 void read_inputs(float* TI, float* TE, float* TR, float* p, float* u){
-    *TI = get_uart_sensor_value(0);
+    *TI = get_uart_sensor_value(LM35);
     if(*TI == -1){
         printf("Erro na leitura do sensor LM35\n");
         encerrar_processo();
@@ -33,7 +33,8 @@ void read_inputs(float* TI, float* TE, float* TR, float* p, float* u){
     *p = get_BME280_reading('p');
     *u = get_BME280_reading('u');
 
-    *TR = get_uart_sensor_value(1);
+    // usleep(100000);
+    *TR = get_uart_sensor_value(POTENCIOMETRO);
     if(*TR == -1){
         printf("Erro na leitura do potenciometro\n");
         encerrar_processo();

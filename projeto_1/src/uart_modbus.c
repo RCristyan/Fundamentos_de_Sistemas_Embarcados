@@ -13,6 +13,9 @@
 #define RECEBER_VALOR_LM35              0xC1
 #define RECEBER_VALOR_POTENCIOMETRO     0xC2
 
+#define LM35            0
+#define POTENCIOMETRO   1
+
 unsigned char rx_buffer[256];
 unsigned char tx_buffer[200];
 unsigned char *p_tx_buffer;
@@ -88,8 +91,6 @@ void wakeup(){
 int le_na_uart(int info){
     if(info != 0) printf("Aguardando resposta...\n");
 
-    usleep(100000);
-    
     int rx_length = 0;
     int retry = 0;
 
@@ -99,6 +100,12 @@ int le_na_uart(int info){
             return -3;
         }
 
+        if(retry != 0){
+            printf("reenviando a uart...\n");
+            escreve_na_uart(tamanho_do_pacote, 1);
+        }
+
+        usleep(500000);
         rx_length = read(uart_filestream, (void*)rx_buffer, 255);
 
         int errnum;
@@ -212,10 +219,10 @@ float get_uart_sensor_value(int option){
 
     clear_buffer();
     
-    if(option == 0){
+    if(option == LM35){
         solicita_leitura_sensor_LM35();
     } 
-    else if(option == 1){
+    else if(option == POTENCIOMETRO){
         solicita_leitura_potenciometro();
     }
     else{
