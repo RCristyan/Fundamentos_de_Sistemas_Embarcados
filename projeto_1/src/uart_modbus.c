@@ -9,34 +9,17 @@
 #include <signal.h>
 
 #define ENDERECO                        0x01
-
 #define RECEBER                         0x23
-#define RECEBER_INT                     0xA1
-#define RECEBER_FLOAT                   0xA2
-#define RECEBER_STRING                  0xA3
 #define RECEBER_VALOR_LM35              0xC1
 #define RECEBER_VALOR_POTENCIOMETRO     0xC2
 
-#define ENVIAR                          0x16
-#define ENVIAR_INT                      0xB1
-#define ENVIAR_FLOAT                    0xB2
-#define ENVIAR_STRING                   0xB3
-
+unsigned char rx_buffer[256];
 unsigned char tx_buffer[200];
 unsigned char *p_tx_buffer;
 
-unsigned char rx_buffer[256];
-
 int uart_filestream;
-
-char* string_convertida[100];
 int tamanho_do_pacote = 0;
-
-typedef union{
-    int inteiro;
-    float flutuante;
-    unsigned char bytes[4];
-} valores;
+int retry_count = 0;
 
 typedef union{
     short crc;
@@ -106,18 +89,34 @@ void le_na_uart(int info){
 
     pause();
     
-    // a leitura do valor pela uart parece ser um gargalo de desempenho...
     int rx_length = read(uart_filestream, (void*)rx_buffer, 255);
     int errnum;
 
     if(rx_length < 0){
         errnum = errno;
         fprintf(stderr, "Erro ao ler dados da UART. Código: %d. Mensagem: %s\n", errno, strerror(errnum));
-        exit(3);
+
+        if(retry_count == 3){
+            printf("%d tentativas de ler UART falharam. Encerrando...\n");
+            exit(3);
+        }
+
+        printf("Tentando conectar de novo...\n");
+        le_na_uart(info);
+        retry_count++;
+
     } else if(rx_length == 0){
         printf("Nenhuma resposta obtida.\n");
-        exit(4);
-    } 
+
+        if(retry_count == 3){
+            printf("%d tentativas de ler UART falharam. Encerrando...\n");
+            exit(4);
+        }
+
+        printf("Tentando conectar de novo...\n");
+        le_na_uart(info);
+        retry_count++;
+    }
 
     rx_buffer[rx_length] = '\0';
 
@@ -126,6 +125,8 @@ void le_na_uart(int info){
         for(int i = 0; i < rx_length; i++) printf("0x%x ", rx_buffer[i]);
         printf("\n");
     }
+
+    retry_count = 0;
 }
 
 void configura_uart(){
@@ -166,24 +167,6 @@ void call_calcula_CRC(int last_pos){
     tamanho_do_pacote += 2;
 }
 
-void solicita_int(){
-    *p_tx_buffer++ = ENDERECO;
-    *p_tx_buffer++ = RECEBER;
-    *p_tx_buffer++ = RECEBER_INT;
-
-    tamanho_do_pacote = 3;
-    call_calcula_CRC(tamanho_do_pacote);
-}
-
-void solicita_float(){
-    *p_tx_buffer++ = ENDERECO;
-    *p_tx_buffer++ = RECEBER;
-    *p_tx_buffer++ = RECEBER_FLOAT;
-
-    tamanho_do_pacote = 3;
-    call_calcula_CRC(tamanho_do_pacote);
-}
-
 void solicita_leitura_sensor_LM35(){
     *p_tx_buffer++ = ENDERECO;
     *p_tx_buffer++ = RECEBER;
@@ -214,87 +197,11 @@ void solicita_leitura_potenciometro(){
     call_calcula_CRC(tamanho_do_pacote);
 }
 
-void solicita_string(){
-    *p_tx_buffer++ = ENDERECO;
-    *p_tx_buffer++ = RECEBER;
-    *p_tx_buffer++ = RECEBER_STRING;
-
-    tamanho_do_pacote = 3;
-    call_calcula_CRC(tamanho_do_pacote);
-}
-
-void envia_int(){
-    *p_tx_buffer++ = ENDERECO;
-    *p_tx_buffer++ = ENVIAR;
-    *p_tx_buffer++ = ENVIAR_INT;
-
-    valores num;
-    printf("Digite um inteiro para enviar:\n");
-    scanf("%d",&num.inteiro);
-    memcpy(&tx_buffer[3],num.bytes,4);
-
-    tamanho_do_pacote = 7;
-    call_calcula_CRC(tamanho_do_pacote);
-}
-
-void envia_float(){
-    *p_tx_buffer++ = ENDERECO;
-    *p_tx_buffer++ = ENVIAR;
-    *p_tx_buffer++ = ENVIAR_FLOAT;
-
-    valores num;
-    printf("Digite um float para enviar:\n");
-    scanf("%f",&num.flutuante);
-    memcpy(&tx_buffer[3],num.bytes,4);
-
-    tamanho_do_pacote = 7;
-    call_calcula_CRC(tamanho_do_pacote);
-}
-
-void envia_string(){
-    *p_tx_buffer++ = ENDERECO;
-    *p_tx_buffer++ = ENVIAR;
-    *p_tx_buffer++ = ENVIAR_STRING;
-
-    char string[100];
-
-    printf("Digite uma string para enviar (máximo 100 bytes): ");
-    scanf("%[^\n]", string);
-
-    valores num;
-    int tamanho_da_string = strlen(string);
-    printf("String = %s\nTamanho = %d\n", string, tamanho_da_string);
-
-    num.inteiro = tamanho_da_string;
-    memcpy(&tx_buffer[3], num.bytes, 4);
-
-    // *p_tx_buffer++ = 0x0D; // tamanho da string
-    memcpy(&tx_buffer[4], &string, tamanho_da_string);
-    tamanho_do_pacote = 3 + tamanho_da_string;
-
-    call_calcula_CRC(tamanho_do_pacote+1);
-}
-
-int converte_pacote_em_int(){
-    int dado = 0;
-    memcpy(&dado, &rx_buffer[3], 4);
-
-    return dado;
-}
-
 float converte_pacote_em_float(){
     float dado = 0;
     memcpy(&dado, &rx_buffer[3], 4);
 
     return dado;
-}
-
-void converte_pacote_em_string(){
-    int tamanho_da_string = 0;
-    memcpy(&tamanho_da_string, &rx_buffer[3], 1);
-
-    memcpy(&string_convertida, &rx_buffer[4], tamanho_da_string);
-    string_convertida[tamanho_da_string+1] = '\0';
 }
 
 void clear_buffer(){
