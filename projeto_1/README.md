@@ -20,6 +20,6 @@ Para executar o programa, basta inserir o comando
 ## Exemplo de resultado
 O gráfico a seguir foi gerado ao se realizar um experimento com este programa:
 
-![grafico_exemplo](./img/grafico_exemplo.png)
+![grafico_exemplo](./utils/grafico_exemplo.png)
 
 Nota: A leitura do sensor de temperatura interna possuia ruídos, e o resistor não aquecia rapidamente.
