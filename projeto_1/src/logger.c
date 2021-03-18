@@ -40,9 +40,9 @@ void create_log_file(){
     }
 }
 
-void write_on_log_file(float TI, float TE, float TR){
+void write_on_log_file(float TI, float TE, float TR, int intensidade_ventoinha, int intensidade_resistor){
     if(first_log_call == 0){
-        fputs("data/hora,temperatura_interna,temperatura_externa,temperatura_de_referencia\n", fp);
+        fputs("data/hora,temperatura_interna,temperatura_externa,temperatura_de_referencia,intensidade_da_ventoinha(%%),intensidade_do_resistor(%%)\n", fp);
         first_log_call++;
     }
     
@@ -55,10 +55,15 @@ void write_on_log_file(float TI, float TE, float TR){
     char ti_buffer[20];
     char te_buffer[20];
     char tr_buffer[20];
+    char ventoinha_buffer[20];
+    char resistor_buffer[20];
 
     gcvt(TI, 4, ti_buffer);
     gcvt(TE, 4, te_buffer);
     gcvt(TR, 4, tr_buffer);
+
+    sprintf(ventoinha_buffer, "%d", intensidade_ventoinha);
+    sprintf(resistor_buffer, "%d", intensidade_resistor);
 
     fputs(ti_buffer, fp);
     fputs(", ", fp);
@@ -67,6 +72,12 @@ void write_on_log_file(float TI, float TE, float TR){
     fputs(", ", fp);
 
     fputs(tr_buffer, fp);
+    fputs(", ", fp);
+    
+    fputs(ventoinha_buffer, fp);
+    fputs(", ", fp);
+
+    fputs(resistor_buffer, fp);
     fputs("\n", fp);
 }
 

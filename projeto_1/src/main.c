@@ -49,17 +49,12 @@ int main(){
         TR = get_potenciometro_reading();
 
         write_values_on_lcd(TI, TE, TR);
-        write_on_log_file(TI, TE, TR);
 
-        printf("TI\tTE\tTR\tVentoinha(%%)\tResistor(%%)\n");
+        printf("TI\tTE\tTR\tPID\tVentoinha(%%)\tResistor(%%)\n");
         printf("%.2f\t%.2f\t%.2f\t", TI, TE, TR);
-        printf("%d\t\t%d\n", intensidade_ventoinha, intensidade_resistor);
+        printf("%.2lf\t%d\t\t%d\n", retorno_pid, intensidade_ventoinha, intensidade_resistor);
         printf("----------\n");
         
-        // calcular pid aqui
-        // se valor retornado < 0, ligar ventoinha
-        // se valor retornado > 0, ligar resistor
-
         pid_atualiza_referencia(TR);
         retorno_pid = pid_controle(TI);
 
@@ -71,9 +66,10 @@ int main(){
             intensidade_resistor = retorno_pid;
         }
 
-        // passar valor calculado para gpio
         write_PWM(VENTOINHA, intensidade_ventoinha);
         write_PWM(RESISTOR, intensidade_resistor);
+
+        write_on_log_file(TI, TE, TR, intensidade_ventoinha, intensidade_resistor);
     }
 
     return 0;
