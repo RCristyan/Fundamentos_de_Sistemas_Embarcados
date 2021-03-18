@@ -32,7 +32,7 @@ void build_datetime_string(char string[]){
 }
 
 void create_log_file(){
-    fp = fopen("log.txt", "w");
+    fp = fopen("utils/log.txt", "w");
 
     if(fp == NULL){
         printf("Erro ao criar arquivo de log.\n");
