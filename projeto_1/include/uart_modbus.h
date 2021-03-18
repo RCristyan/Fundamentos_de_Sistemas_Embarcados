@@ -2,8 +2,7 @@
 #define __UART_MODBUS__
 
 void configura_uart();
-float get_LM35_reading();
-float get_potenciometro_reading();
+float get_uart_sensor_value(int option);
 void close_uart();
 
 #endif

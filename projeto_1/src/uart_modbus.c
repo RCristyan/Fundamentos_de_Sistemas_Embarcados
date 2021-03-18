@@ -62,13 +62,13 @@ short CRC16(short crc, char data){
     return ((crc & 0xFF00) >> 8) ^ tbl[(crc & 0x00FF) ^ (data & 0x00FF)];
 }
 
-void escreve_na_uart(int quantidade_de_bytes, int info){
+int escreve_na_uart(int quantidade_de_bytes, int info){
     if(info != 0) printf("Escrevendo na UART...\n");
     int count = write(uart_filestream, &tx_buffer[0], quantidade_de_bytes);
     
     if(count < 0){
         printf("Ocorreu um erro ao escrever na UART. Encerrando...\n");
-        exit(2);
+        return -2;
     }
 
     if(info != 0){
@@ -77,13 +77,15 @@ void escreve_na_uart(int quantidade_de_bytes, int info){
         for(int i = 0; i < quantidade_de_bytes; i++) printf("0x%x ", tx_buffer[i]);
         printf("\n");
     }
+
+    return 0;
 }
 
 void wakeup(){
     // do_nothing
 }
 
-void le_na_uart(int info){
+int le_na_uart(int info){
     if(info != 0) printf("Aguardando resposta...\n");
 
     usleep(100000);
@@ -94,7 +96,7 @@ void le_na_uart(int info){
     do{
         if(retry == 5){
             printf("Número máximo de tentativas atingido, encerrando...\n");
-            exit(3);
+            return -3;
         }
 
         rx_length = read(uart_filestream, (void*)rx_buffer, 255);
@@ -112,7 +114,7 @@ void le_na_uart(int info){
 
     if(rx_length == 0){
         printf("Nenhuma resposta obtida.\n");
-        exit(4);
+        return -4;
     }
 
     rx_buffer[rx_length] = '\0';
@@ -122,6 +124,8 @@ void le_na_uart(int info){
         for(int i = 0; i < rx_length; i++) printf("0x%x ", rx_buffer[i]);
         printf("\n");
     }
+
+    return 0;
 }
 
 void configura_uart(){
@@ -167,6 +171,7 @@ void solicita_leitura_sensor_LM35(){
     *p_tx_buffer++ = RECEBER;
     *p_tx_buffer++ = RECEBER_VALOR_LM35;
 
+    // enviar 4 ultimos dígitos da matrícula
     *p_tx_buffer++ = 0x04;
     *p_tx_buffer++ = 0x03;
     *p_tx_buffer++ = 0x08;
@@ -181,6 +186,7 @@ void solicita_leitura_potenciometro(){
     *p_tx_buffer++ = RECEBER;
     *p_tx_buffer++ = RECEBER_VALOR_POTENCIOMETRO;
 
+    // enviar 4 ultimos dígitos da matrícula
     *p_tx_buffer++ = 0x04;
     *p_tx_buffer++ = 0x03;
     *p_tx_buffer++ = 0x08;
@@ -201,20 +207,27 @@ void clear_buffer(){
     p_tx_buffer = &tx_buffer[0];
 }
 
-float get_LM35_reading(){
-    clear_buffer();
-    solicita_leitura_sensor_LM35();
-    escreve_na_uart(tamanho_do_pacote, 0);
-    le_na_uart(0);
+float get_uart_sensor_value(int option){
+    int read_status = 0;
 
-    return converte_pacote_em_float();
-}
-
-float get_potenciometro_reading(){
     clear_buffer();
-    solicita_leitura_potenciometro();
-    escreve_na_uart(tamanho_do_pacote, 0);
-    le_na_uart(0);
+    
+    if(option == 0){
+        solicita_leitura_sensor_LM35();
+    } 
+    else if(option == 1){
+        solicita_leitura_potenciometro();
+    }
+    else{
+        printf("Opção de leitura não reconhecida\n");
+        return -1;
+    }
+    
+    read_status = escreve_na_uart(tamanho_do_pacote, 0);
+    if(read_status < 0) return -1;
+    
+    read_status = le_na_uart(0);
+    if(read_status < 0) return -1;
 
     return converte_pacote_em_float();
 }
