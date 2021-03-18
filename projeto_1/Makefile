@@ -1,10 +1,13 @@
 INCLUDE_PATH?=-I./include
 SRC_PATH?=./src/
 OBJECT_PATH?=./object/
+UTILS_PATH?=./utils/
 
 run: executable
 	./executable
-	python3 plotter.py ./test_log.txt
+
+plot:
+	python3 $(SRC_PATH)plotter.py $(UTILS_PATH)log.txt $(UTILS_PATH)graph.png
 
 executable: uart_modbus i2c_read_bme bme main i2c_lcd_write logger gpio pid
 	gcc $(OBJECT_PATH)*.o -o executable -lwiringPi

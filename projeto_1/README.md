@@ -17,6 +17,11 @@ Para executar o programa, basta inserir o comando
     make run
 ```
 
+Para plotar o gráfico:
+```
+    make plot
+```
+
 ## Exemplo de resultado
 O gráfico a seguir foi gerado ao se realizar um experimento com este programa:
 
