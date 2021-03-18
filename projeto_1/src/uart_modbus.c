@@ -19,7 +19,6 @@ unsigned char *p_tx_buffer;
 
 int uart_filestream;
 int tamanho_do_pacote = 0;
-int retry_count = 0;
 
 typedef union{
     short crc;
@@ -87,7 +86,7 @@ void wakeup(){
 void le_na_uart(int info){
     if(info != 0) printf("Aguardando resposta...\n");
 
-    pause();
+    usleep(100000);
     
     int rx_length = read(uart_filestream, (void*)rx_buffer, 255);
     int errnum;
@@ -95,27 +94,10 @@ void le_na_uart(int info){
     if(rx_length < 0){
         errnum = errno;
         fprintf(stderr, "Erro ao ler dados da UART. Código: %d. Mensagem: %s\n", errno, strerror(errnum));
-
-        if(retry_count == 3){
-            printf("%d tentativas de ler UART falharam. Encerrando...\n");
-            exit(3);
-        }
-
-        printf("Tentando conectar de novo...\n");
-        le_na_uart(info);
-        retry_count++;
-
+        exit(3);
     } else if(rx_length == 0){
         printf("Nenhuma resposta obtida.\n");
-
-        if(retry_count == 3){
-            printf("%d tentativas de ler UART falharam. Encerrando...\n");
-            exit(4);
-        }
-
-        printf("Tentando conectar de novo...\n");
-        le_na_uart(info);
-        retry_count++;
+        exit(4);
     }
 
     rx_buffer[rx_length] = '\0';
@@ -125,8 +107,6 @@ void le_na_uart(int info){
         for(int i = 0; i < rx_length; i++) printf("0x%x ", rx_buffer[i]);
         printf("\n");
     }
-
-    retry_count = 0;
 }
 
 void configura_uart(){
