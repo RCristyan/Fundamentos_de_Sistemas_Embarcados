@@ -4,6 +4,7 @@ OBJECT_PATH?=./object/
 
 run: executable
 	./executable
+	python3 plotter.py
 
 executable: uart_modbus i2c_read_bme bme main i2c_lcd_write logger gpio pid
 	gcc $(OBJECT_PATH)*.o -o executable -lwiringPi
