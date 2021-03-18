@@ -10,6 +10,10 @@
 #include "gpio.h"
 #include "pid.h"
 
+int intensidade_ventoinha = 0;
+int intensidade_resistor = 0;
+double retorno_pid = 0;
+
 void encerrar_processo(){
     printf("\n");
     printf("Encerrando processo...\n");
@@ -33,13 +37,30 @@ void read_inputs(float* TI, float* TE, float* TR, float* p, float* u){
     *p = get_BME280_reading('p');
     *u = get_BME280_reading('u');
 
-    // usleep(100000);
     *TR = get_uart_sensor_value(POTENCIOMETRO);
     if(*TR == -1){
         printf("Erro na leitura do potenciometro\n");
         encerrar_processo();
     }
 }
+
+void temperature_control(float *TI, float *TR){
+    pid_atualiza_referencia(*TR);
+    retorno_pid = pid_controle(*TI);
+
+    if(retorno_pid < 0){
+        intensidade_ventoinha = -1 * retorno_pid;
+        intensidade_resistor = 0;
+    } else if(retorno_pid >= 0){
+        intensidade_ventoinha = 0;
+        intensidade_resistor = retorno_pid;
+    }
+
+    write_PWM(VENTOINHA, intensidade_ventoinha);
+    write_PWM(RESISTOR, intensidade_resistor);
+}
+
+void print_info(){}
 
 int main(){
     configura_uart();
@@ -48,17 +69,12 @@ int main(){
     create_log_file();
     setup_PWM(VENTOINHA);
     setup_PWM(RESISTOR);
-    
     signal(SIGINT, encerrar_processo);
-
     pid_configura_constantes(5.0, 1.0, 5.0);
 
     float TI, TE, TR;
     float p, u;
-    int intensidade_ventoinha = 0;
-    int intensidade_resistor = 0;
     int direction = 1;
-    double retorno_pid = 0;
 
     while(1){
         read_inputs(&TI, &TE, &TR, &p, &u);
@@ -69,20 +85,7 @@ int main(){
         printf("%.2lf\t%d\t\t%d\n", retorno_pid, intensidade_ventoinha, intensidade_resistor);
         printf("----------\n");
         
-        pid_atualiza_referencia(TR);
-        retorno_pid = pid_controle(TI);
-
-        if(retorno_pid < 0){
-            intensidade_ventoinha = -1 * retorno_pid;
-            intensidade_resistor = 0;
-        } else if(retorno_pid >= 0){
-            intensidade_ventoinha = 0;
-            intensidade_resistor = retorno_pid;
-        }
-
-        write_PWM(VENTOINHA, intensidade_ventoinha);
-        write_PWM(RESISTOR, intensidade_resistor);
-
+        temperature_control(&TI, &TR);
         write_on_log_file(TI, TE, TR, intensidade_ventoinha, intensidade_resistor);
     }
 
