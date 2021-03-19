@@ -22,11 +22,13 @@ Para plotar o gráfico:
     make plot
 ```
 
-## Exemplos de resultados
+## Resultados obtidos
 Os gráficos a seguir foram gerados ao se realizar experimentos com este programa:
 
 ![grafico_exemplo](./utils/grafico_exemplo.png)
 
 ![grafico_exemplo2](./utils/grafico_exemplo2.png)
+
+![grafico_exemplo3](./utils/grafico_exemplo3.png)
 
 Nota: A leitura do sensor de temperatura interna possuia ruídos, e o resistor não aquecia rapidamente.
