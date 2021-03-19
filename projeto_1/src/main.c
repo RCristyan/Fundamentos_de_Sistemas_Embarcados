@@ -51,6 +51,7 @@ void temperature_control(float *TI, float *TR){
 
     if(retorno_pid < 0){
         intensidade_ventoinha = -1 * retorno_pid;
+        if(intensidade_ventoinha < 40) intensidade_ventoinha = 0;
         intensidade_resistor = 0;
     } else if(retorno_pid >= 0){
         intensidade_ventoinha = 0;
@@ -85,14 +86,37 @@ void setup(){
     pid_configura_constantes(5.0, 1.0, 5.0);
 }
 
+int menu(){
+    printf("===============================\n");
+    printf("Bem vindo ao menu. Escolha como definir a temperatura de referência:\n\n");
+   
+    int option = 0;
+
+    while(1){
+        printf("\t1. Pelo potenciometro.\n");
+        printf("\t2. Pelo terminal.\n");
+        scanf("%d", &option);
+
+        if(option == 1 || option == 2) break;
+
+        printf("Escolha uma das opções!\n");
+    }
+
+    printf("===============================\n");
+
+    return option;
+}
+
 int main(){
     setup();
 
     float TI, TE, TR;
     float p, u;
 
+    int option = menu();
+
     while(1){
-        read_inputs(&TI, &TE, &TR, &p, &u);
+        if(option == 1) read_inputs(&TI, &TE, &TR, &p, &u);
         write_values_on_lcd(TI, TE, TR);
 
         print_info(TI, TE, TR, retorno_pid, intensidade_ventoinha, intensidade_resistor);
