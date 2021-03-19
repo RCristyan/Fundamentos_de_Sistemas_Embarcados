@@ -20,6 +20,7 @@ void encerrar_processo(){
 
     close_uart();
     close_log_file();
+    clear_lcd();
     finish_PWM(VENTOINHA);
     finish_PWM(RESISTOR);
 
@@ -60,9 +61,18 @@ void temperature_control(float *TI, float *TR){
     write_PWM(RESISTOR, intensidade_resistor);
 }
 
-void print_info(){}
+void print_info(float TI, float TE, float TR, double retorno_pid, int intensidade_ventoinha, int intensidade_resistor){
+    printf("TI\tTE\tTR\tPID\tVentoinha(%%)\tResistor(%%)\n");
+    printf("%.2f\t%.2f\t%.2f\t", TI, TE, TR);
+    printf("%.2lf\t%d\t\t%d\n", retorno_pid, intensidade_ventoinha, intensidade_resistor);
+    printf("----------\n");
+}
 
-int main(){
+void trata_sigalrm(){
+    alarm(1);
+}
+
+void setup(){
     configura_uart();
     setupBME280();    
     configura_i2c_lcd();
@@ -70,23 +80,27 @@ int main(){
     setup_PWM(VENTOINHA);
     setup_PWM(RESISTOR);
     signal(SIGINT, encerrar_processo);
+    signal(SIGALRM, trata_sigalrm);
+    alarm(1);
     pid_configura_constantes(5.0, 1.0, 5.0);
+}
+
+int main(){
+    setup();
 
     float TI, TE, TR;
     float p, u;
-    int direction = 1;
 
     while(1){
         read_inputs(&TI, &TE, &TR, &p, &u);
         write_values_on_lcd(TI, TE, TR);
 
-        printf("TI\tTE\tTR\tPID\tVentoinha(%%)\tResistor(%%)\n");
-        printf("%.2f\t%.2f\t%.2f\t", TI, TE, TR);
-        printf("%.2lf\t%d\t\t%d\n", retorno_pid, intensidade_ventoinha, intensidade_resistor);
-        printf("----------\n");
+        print_info(TI, TE, TR, retorno_pid, intensidade_ventoinha, intensidade_resistor);
         
         temperature_control(&TI, &TR);
         write_on_log_file(TI, TE, TR, intensidade_ventoinha, intensidade_resistor);
+
+        pause();
     }
 
     return 0;
