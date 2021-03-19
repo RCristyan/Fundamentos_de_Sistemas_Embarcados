@@ -13,6 +13,19 @@
 int intensidade_ventoinha = 0;
 int intensidade_resistor = 0;
 double retorno_pid = 0;
+float tr_user_input = 0;
+
+
+void encerrar_processo();
+void read_inputs(float* TI, float* TE, float* p, float* u);
+void get_potenciometro(float* TR);
+void temperature_control(float *TI, float *TR);
+void print_info(float TI, float TE, float TR, double retorno_pid, int intensidade_ventoinha, int intensidade_resistor);
+void reset_alarme();
+void menu_request();
+void setup();
+int menu();
+
 
 void encerrar_processo(){
     printf("\n");
@@ -27,7 +40,7 @@ void encerrar_processo(){
     exit(0);
 }
 
-void read_inputs(float* TI, float* TE, float* TR, float* p, float* u){
+void read_inputs(float* TI, float* TE, float* p, float* u){
     *TI = get_uart_sensor_value(LM35);
     if(*TI == -1){
         printf("Erro na leitura do sensor LM35\n");
@@ -37,7 +50,9 @@ void read_inputs(float* TI, float* TE, float* TR, float* p, float* u){
     *TE = get_BME280_reading('t');
     *p = get_BME280_reading('p');
     *u = get_BME280_reading('u');
+}
 
+void get_potenciometro(float* TR){
     *TR = get_uart_sensor_value(POTENCIOMETRO);
     if(*TR == -1){
         printf("Erro na leitura do potenciometro\n");
@@ -69,8 +84,12 @@ void print_info(float TI, float TE, float TR, double retorno_pid, int intensidad
     printf("----------\n");
 }
 
-void trata_sigalrm(){
+void reset_alarme(){
     alarm(1);
+}
+
+void menu_request(){
+    menu();
 }
 
 void setup(){
@@ -80,28 +99,47 @@ void setup(){
     create_log_file();
     setup_PWM(VENTOINHA);
     setup_PWM(RESISTOR);
+
     signal(SIGINT, encerrar_processo);
-    signal(SIGALRM, trata_sigalrm);
+    signal(SIGALRM, reset_alarme);
+    signal(SIGQUIT, menu_request);
+    
     alarm(1);
     pid_configura_constantes(5.0, 1.0, 5.0);
 }
 
+// necessário fazer ajustes
 int menu(){
-    printf("===============================\n");
-    printf("Bem vindo ao menu. Escolha como definir a temperatura de referência:\n\n");
+    printf("\n===============================\n");
+    printf("Bem vindo ao menu. Escolha uma opção:\n\n");
    
     int option = 0;
 
     while(1){
-        printf("\t1. Pelo potenciometro.\n");
-        printf("\t2. Pelo terminal.\n");
+        printf("\t1. Definir a temperatura de referência pelo potenciometro.\n");
+        printf("\t2. Definir a temperatura de referência pelo terminal.\n");
+        printf("\t0. Encerrar processo.\n");
+        printf("> ");
         scanf("%d", &option);
 
-        if(option == 1 || option == 2) break;
+        if(option == 0 || option == 1 || option == 2) break;
 
         printf("Escolha uma das opções!\n");
     }
 
+    if(option == 0){
+        encerrar_processo();
+    }
+
+    if(option == 2){
+        printf("Informe a temperatura de referência:\n");
+        printf("> ");
+        scanf("%f", &tr_user_input);
+        printf("Temperatura de referência definida: %.2f\n", tr_user_input);
+    }
+
+    printf("Lembrete: pressione CTRL+\\ a qualquer momento para interromper o programa e abrir o menu\n");
+    sleep(1);
     printf("===============================\n");
 
     return option;
@@ -116,7 +154,11 @@ int main(){
     int option = menu();
 
     while(1){
-        if(option == 1) read_inputs(&TI, &TE, &TR, &p, &u);
+        read_inputs(&TI, &TE, &p, &u);
+        
+        if(option == 1) get_potenciometro(&TR);
+        else if(option == 2) TR = tr_user_input;
+
         write_values_on_lcd(TI, TE, TR);
 
         print_info(TI, TE, TR, retorno_pid, intensidade_ventoinha, intensidade_resistor);
