@@ -46,5 +46,5 @@ axs[1].set(xlabel="Time (s)", ylabel="Intensity (%)")
 axs[1].set_title("Acionamento dos controladores de temperatura")
 
 plt.text(-20, -35, "Started: " + start_time)
-plt.text(120, -35, "Finished: " + finish_time)
+plt.text(170, -35, "Finished: " + finish_time)
 plt.savefig(graph_file_name)

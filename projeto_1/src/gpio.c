@@ -20,4 +20,5 @@ void write_PWM(int pino, int valor){
 
 void finish_PWM(int pino){
     softPwmWrite(pino, 0);
+    delay(50);
 }

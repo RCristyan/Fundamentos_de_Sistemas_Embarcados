@@ -105,7 +105,7 @@ int le_na_uart(int info){
             escreve_na_uart(tamanho_do_pacote, 1);
         }
 
-        usleep(500000);
+        usleep(200000);
         rx_length = read(uart_filestream, (void*)rx_buffer, 255);
 
         int errnum;
@@ -178,7 +178,6 @@ void solicita_leitura_sensor_LM35(){
     *p_tx_buffer++ = RECEBER;
     *p_tx_buffer++ = RECEBER_VALOR_LM35;
 
-    // enviar 4 ultimos dígitos da matrícula
     *p_tx_buffer++ = 0x04;
     *p_tx_buffer++ = 0x03;
     *p_tx_buffer++ = 0x08;
@@ -193,7 +192,6 @@ void solicita_leitura_potenciometro(){
     *p_tx_buffer++ = RECEBER;
     *p_tx_buffer++ = RECEBER_VALOR_POTENCIOMETRO;
 
-    // enviar 4 ultimos dígitos da matrícula
     *p_tx_buffer++ = 0x04;
     *p_tx_buffer++ = 0x03;
     *p_tx_buffer++ = 0x08;

@@ -53,14 +53,14 @@ void configura_i2c_lcd(){
     printf("LCD inicializado com sucesso.\n");
 }
 
+void clear_lcd(){
+    ClrLcd();
+}
+
 void lcd_write(int line, char string[20], int delay_ms){
     lcdLoc(line);
     typeln(string);
     delay(delay_ms);
-}
-
-void clear_lcd(){
-    ClrLcd();
 }
 
 void write_values_on_lcd(float TI, float TE, float TR){

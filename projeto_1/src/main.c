@@ -94,7 +94,7 @@ void menu_request(){
 
 void setup(){
     configura_uart();
-    setupBME280();    
+    setupBME280();
     configura_i2c_lcd();
     create_log_file();
     setup_PWM(VENTOINHA);
