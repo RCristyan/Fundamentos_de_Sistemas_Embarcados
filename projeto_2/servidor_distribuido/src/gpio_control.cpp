@@ -62,3 +62,26 @@ void shutdown_gpio(){
     desligar_dispositivo(AR_CONDICIONADO_1_QUARTO_1);
     desligar_dispositivo(AR_CONDICIONADO_2_QUARTO_2);
 }
+
+void display_gpio_status(){
+    cout << "----------------\n";
+    cout << "Valores GPIO\n";
+    cout << "Dispositivos:\n";
+    cout << "LAMPADA_1_COZINHA: " << digitalRead(LAMPADA_1_COZINHA) << endl;
+    cout << "LAMPADA_2_SALA: " << digitalRead(LAMPADA_2_SALA) << endl;
+    cout << "LAMPADA_3_QUARTO_1: " << digitalRead(LAMPADA_3_QUARTO_1) << endl;
+    cout << "LAMPADA_4_QUARTO_2: " << digitalRead(LAMPADA_4_QUARTO_2) << endl;
+    cout << "AR_CONDICIONADO_1_QUARTO_1: " << digitalRead(AR_CONDICIONADO_1_QUARTO_1) << endl;
+    cout << "AR_CONDICIONADO_2_QUARTO_2: " << digitalRead(AR_CONDICIONADO_2_QUARTO_2) << endl;
+
+    cout << "\nSensores:\n";
+    cout << "SENSOR_PRESENCA_1_SALA: " << digitalRead(SENSOR_PRESENCA_1_SALA) << endl;
+    cout << "SENSOR_PRESENCA_2_COZINHA: " << digitalRead(SENSOR_PRESENCA_2_COZINHA) << endl;
+    cout << "SENSOR_ABERTURA_1_PORTA_COZINHA: " << digitalRead(SENSOR_ABERTURA_1_PORTA_COZINHA) << endl;
+    cout << "SENSOR_ABERTURA_2_JANELA_COZINHA: " << digitalRead(SENSOR_ABERTURA_2_JANELA_COZINHA) << endl;
+    cout << "SENSOR_ABERTURA_3_PORTA_SALA: " << digitalRead(SENSOR_ABERTURA_3_PORTA_SALA) << endl;
+    cout << "SENSOR_ABERTURA_4_JANELA_SALA: " << digitalRead(SENSOR_ABERTURA_4_JANELA_SALA) << endl;
+    cout << "SENSOR_ABERTURA_5_JANELA_QUARTO_1: " << digitalRead(SENSOR_ABERTURA_5_JANELA_QUARTO_1) << endl;
+    cout << "SENSOR_ABERTURA_6_JANELA_QUARTO_2: " << digitalRead(SENSOR_ABERTURA_6_JANELA_QUARTO_2) << endl;
+    cout << "----------------\n";
+}
