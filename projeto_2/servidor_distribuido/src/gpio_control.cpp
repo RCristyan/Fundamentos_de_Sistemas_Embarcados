@@ -19,6 +19,7 @@ void gpio_control_setup(){
     pinMode(LAMPADA_1_COZINHA, OUTPUT);
     pinMode(LAMPADA_2_SALA, OUTPUT);
     pinMode(LAMPADA_3_QUARTO_1, OUTPUT);
+    pinMode(LAMPADA_4_QUARTO_2, OUTPUT);
     pinMode(AR_CONDICIONADO_1_QUARTO_1, OUTPUT);
     pinMode(AR_CONDICIONADO_2_QUARTO_2, OUTPUT);
 
@@ -43,4 +44,21 @@ void test_gpio(int pin, int direction){
         sleep(2);
         digitalWrite(pin, LOW);
     }
+}
+
+void ligar_dispositivo(int pin){
+    digitalWrite(pin, HIGH);
+}
+
+void desligar_dispositivo(int pin){
+    digitalWrite(pin, LOW);
+}
+
+void shutdown_gpio(){
+    desligar_dispositivo(LAMPADA_1_COZINHA);
+    desligar_dispositivo(LAMPADA_2_SALA);
+    desligar_dispositivo(LAMPADA_3_QUARTO_1);
+    desligar_dispositivo(LAMPADA_4_QUARTO_2);
+    desligar_dispositivo(AR_CONDICIONADO_1_QUARTO_1);
+    desligar_dispositivo(AR_CONDICIONADO_2_QUARTO_2);
 }

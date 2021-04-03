@@ -23,5 +23,8 @@
 
 void gpio_control_setup();
 void test_gpio(int pin, int direction);
+void ligar_dispositivo(int pin);
+void desligar_dispositivo(int pin);
+void shutdown_gpio();
 
 #endif

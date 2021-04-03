@@ -9,10 +9,7 @@ extern "C"{
 
 using namespace std;
 
-int main(){
-
-    cout << "Hello from C++!\n";
-    
+void i2c_sensor_reading(){
     setupBME280();
     float t, p, u;
 
@@ -25,17 +22,22 @@ int main(){
 
         usleep(200000);
     }
+}
+
+int main(){
 
     gpio_control_setup();
 
-    test_gpio(SENSOR_PRESENCA_1_SALA, INPUT);
-    test_gpio(SENSOR_PRESENCA_2_COZINHA, INPUT);
-    test_gpio(SENSOR_ABERTURA_1_PORTA_COZINHA, INPUT);
-    test_gpio(SENSOR_ABERTURA_2_JANELA_COZINHA, INPUT);
-    test_gpio(SENSOR_ABERTURA_3_PORTA_SALA, INPUT);
-    test_gpio(SENSOR_ABERTURA_4_JANELA_SALA, INPUT);
-    test_gpio(SENSOR_ABERTURA_5_JANELA_QUARTO_1, INPUT);
-    test_gpio(SENSOR_ABERTURA_6_JANELA_QUARTO_2, INPUT);
+    ligar_dispositivo(LAMPADA_1_COZINHA);
+    ligar_dispositivo(LAMPADA_2_SALA);
+    ligar_dispositivo(LAMPADA_3_QUARTO_1);
+    ligar_dispositivo(LAMPADA_4_QUARTO_2);
+    ligar_dispositivo(AR_CONDICIONADO_1_QUARTO_1);
+    ligar_dispositivo(AR_CONDICIONADO_2_QUARTO_2);
+
+    sleep(2);
+
+    shutdown_gpio();
 
     return 0;
 }
