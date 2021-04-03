@@ -6,6 +6,7 @@ extern "C"{
 #include <stdlib.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <vector>
 #include "gpio_control.h"
 
 using namespace std;
@@ -84,4 +85,21 @@ void display_gpio_status(){
     cout << "SENSOR_ABERTURA_5_JANELA_QUARTO_1: " << digitalRead(SENSOR_ABERTURA_5_JANELA_QUARTO_1) << endl;
     cout << "SENSOR_ABERTURA_6_JANELA_QUARTO_2: " << digitalRead(SENSOR_ABERTURA_6_JANELA_QUARTO_2) << endl;
     cout << "----------------\n";
+}
+
+bool perimeter_breach(){
+    vector<int> sensor_list = {SENSOR_PRESENCA_1_SALA,
+                               SENSOR_PRESENCA_2_COZINHA,
+                               SENSOR_ABERTURA_1_PORTA_COZINHA,
+                               SENSOR_ABERTURA_2_JANELA_COZINHA,
+                               SENSOR_ABERTURA_3_PORTA_SALA,
+                               SENSOR_ABERTURA_4_JANELA_SALA,
+                               SENSOR_ABERTURA_5_JANELA_QUARTO_1,
+                               SENSOR_ABERTURA_6_JANELA_QUARTO_2};
+
+    for(int x = 0; x < sensor_list.size(); x++){
+        if(digitalRead(sensor_list[x]) == 1) return true;
+    }
+
+    return false;
 }

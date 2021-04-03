@@ -35,7 +35,10 @@ int main(){
     ligar_dispositivo(AR_CONDICIONADO_1_QUARTO_1);
     ligar_dispositivo(AR_CONDICIONADO_2_QUARTO_2);
 
-    sleep(2);
+    sleep(1);
+
+    if (perimeter_breach()) cout << "brecha de segurança!!\n";
+    else cout << "tudo certo\n";
 
     shutdown_gpio();
 
