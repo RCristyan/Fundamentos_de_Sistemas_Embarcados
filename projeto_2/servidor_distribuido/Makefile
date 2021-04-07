@@ -5,7 +5,7 @@ INCLUDE_PATH?=-I./include
 run: executable
 	./executable
 
-executable: main bme i2c_read_bme280 gpio_control
+executable: main bme i2c_read_bme280 gpio_control servidor
 	g++ $(OBJECT_PATH)*.o -o executable -lpthread -lwiringPi
 
 main: $(SRC_PATH)main.cpp
@@ -19,6 +19,9 @@ i2c_read_bme280: $(SRC_PATH)i2c_read_bme280.c
 
 gpio_control: $(SRC_PATH)gpio_control.cpp
 	g++ $(INCLUDE_PATH) -c $(SRC_PATH)gpio_control.cpp -o $(OBJECT_PATH)gpio_control.o
+
+servidor: $(SRC_PATH)servidor.cpp
+	g++ $(INCLUDE_PATH) -c $(SRC_PATH)servidor.cpp -o $(OBJECT_PATH)servidor.o
 
 clean:
 	rm $(OBJECT_PATH)*.o

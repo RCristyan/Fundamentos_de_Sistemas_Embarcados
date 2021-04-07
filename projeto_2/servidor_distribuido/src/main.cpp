@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "gpio_control.h"
+#include "servidor.h"
 
 extern "C"{
     #include "i2c_read_bme280.h"
@@ -24,8 +25,7 @@ void i2c_sensor_reading(){
     }
 }
 
-int main(){
-
+void gpio_tests(){
     gpio_control_setup();
 
     ligar_dispositivo(LAMPADA_1_COZINHA);
@@ -41,6 +41,17 @@ int main(){
     else cout << "tudo certo\n";
 
     shutdown_gpio();
+}
+
+// escutar as requisições do socket através de uma thread
+void socket_wait_request(){
+    waitRequest();
+}
+
+int main(){
+    setupServer();
+
+    socket_wait_request();
 
     return 0;
 }
