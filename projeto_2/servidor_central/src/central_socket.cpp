@@ -13,7 +13,7 @@ using namespace std;
 
 int clienteSocket;
 struct sockaddr_in servidorAddr;
-const char *msg = "ronaldinho";
+const char *msg = "ligar lampada 01";
 char buffer[BUFFER_SIZE];
 unsigned int tamanhoMensagem;
 
