@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 
 #include "servidor.h"
+#include "gpio_control.h"
 
 #define PORTA_SERVIDOR 10123
 #define BUFFER_SIZE 50
@@ -27,6 +28,7 @@ void closeServer(int signal){
 
     close(clienteSocket);
     close(servidorSocket);
+    shutdown_gpio();
     exit(EXIT_SUCCESS);
 }
 
@@ -34,33 +36,33 @@ void handleRequisiton(){
     if(strcmp(buffer, "exit") == 0) closeServer(SIGINT);
     else if(strcmp(buffer, "ligar lampada 01") == 0){
         cout << "ligando...\n";
-        // ligar_dispositivo(LAMPADA_1_COZINHA);
-        // sleep(3);
-        // desligar_dispositivo(LAMPADA_1_COZINHA);
+        ligar_dispositivo(LAMPADA_1_COZINHA);
+        sleep(3);
+        desligar_dispositivo(LAMPADA_1_COZINHA);
         strcpy(server_response, "lampada 01 ligada");
         cout << "lampada 01 ligada\n";
     }
     else if(strcmp(buffer, "ligar lampada 02") == 0){
         cout << "ligando...\n";
-        // ligar_dispositivo(LAMPADA_2_SALA);
-        // sleep(3);
-        // desligar_dispositivo(LAMPADA_2_SALA);
+        ligar_dispositivo(LAMPADA_2_SALA);
+        sleep(3);
+        desligar_dispositivo(LAMPADA_2_SALA);
         strcpy(server_response, "lampada 02 ligada");
         cout << "lampada 02 ligada\n";
     }
     else if(strcmp(buffer, "ligar lampada 03") == 0){
         cout << "ligando...\n";
-        // ligar_dispositivo(LAMPADA_3_QUARTO_1);
-        // sleep(3);
-        // desligar_dispositivo(LAMPADA_3_QUARTO_1);
+        ligar_dispositivo(LAMPADA_3_QUARTO_1);
+        sleep(3);
+        desligar_dispositivo(LAMPADA_3_QUARTO_1);
         strcpy(server_response, "lampada 03 ligada");
         cout << "lampada 03 ligada\n";
     }
     else if(strcmp(buffer, "ligar lampada 04") == 0){
         cout << "ligando...\n";
-        // ligar_dispositivo(LAMPADA_4_QUARTO_2);
-        // sleep(3);
-        // desligar_dispositivo(LAMPADA_4_QUARTO_2);
+        ligar_dispositivo(LAMPADA_4_QUARTO_2);
+        sleep(3);
+        desligar_dispositivo(LAMPADA_4_QUARTO_2);
         strcpy(server_response, "lampada 04 ligada");
         cout << "lampada 04 ligada\n";
     }
@@ -73,6 +75,7 @@ void handleRequisiton(){
 void setupServer(){
     // setup
     signal(SIGINT, closeServer);
+    gpio_control_setup();
 
     if((servidorSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0){
         perror("falha no socket do servidor");
