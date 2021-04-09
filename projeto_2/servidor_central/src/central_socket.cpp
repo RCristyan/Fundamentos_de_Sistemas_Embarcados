@@ -35,41 +35,42 @@ void setupClienteSocket(){
 }
 
 int main(int argc, char **argv){
+    
+    while(1){
+        setupClienteSocket();
 
-    setupClienteSocket();
+        cout << "informe o comando: ";
+        cin >> msg;
+        
+        tamanhoMensagem = strlen(msg);
 
-    if(argc > 1){
-        cout << "argc = " << argc << endl;
-        cout << "argv[1] = " << argv[1] << endl;
-        strcpy(msg, argv[1]);
-    }
-    else strcpy(msg, "ligar lampada 01");
-
-    tamanhoMensagem = strlen(msg);
-
-    if(send(clienteSocket, msg, tamanhoMensagem, 0) != tamanhoMensagem){
-        perror("erro ao enviar mensagem");
-        exit(EXIT_FAILURE);
-    }
-
-    int bytesRecebidos;
-    int totalBytesRecebidos;
-
-    memset(&buffer, 0, sizeof(buffer));
-
-    totalBytesRecebidos = 0;
-    while(totalBytesRecebidos < tamanhoMensagem){
-        if((bytesRecebidos = recv(clienteSocket, buffer, BUFFER_SIZE, 0)) < 0){
-            perror("erro ao receber");
+        cout << "enviando comando: " << msg << endl;
+        if(send(clienteSocket, msg, tamanhoMensagem, 0) != tamanhoMensagem){
+            perror("erro ao enviar mensagem");
             exit(EXIT_FAILURE);
         }
 
-        totalBytesRecebidos += bytesRecebidos;
-        buffer[bytesRecebidos] = '\0';
-        cout << buffer << endl;
-    }
+        if(strcmp(msg, "exit") == 0) break;
 
-    close(clienteSocket);
+        int bytesRecebidos;
+        int totalBytesRecebidos;
+
+        memset(&buffer, 0, sizeof(buffer));
+
+        totalBytesRecebidos = 0;
+        while(totalBytesRecebidos < tamanhoMensagem){
+            if((bytesRecebidos = recv(clienteSocket, buffer, BUFFER_SIZE, 0)) < 0){
+                perror("erro ao receber");
+                exit(EXIT_FAILURE);
+            }
+
+            totalBytesRecebidos += bytesRecebidos;
+            buffer[bytesRecebidos] = '\0';
+            cout << buffer << endl;
+        }
+
+        close(clienteSocket);
+    }
 
     return 0;
 }
