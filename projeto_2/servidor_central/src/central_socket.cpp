@@ -13,7 +13,7 @@ using namespace std;
 
 int clienteSocket;
 struct sockaddr_in servidorAddr;
-const char *msg = "ligar lampada 01";
+char msg[50];
 char buffer[BUFFER_SIZE];
 unsigned int tamanhoMensagem;
 
@@ -34,9 +34,16 @@ void setupClienteSocket(){
     }
 }
 
-int main(){
+int main(int argc, char **argv){
 
     setupClienteSocket();
+
+    if(argc > 1){
+        cout << "argc = " << argc << endl;
+        cout << "argv[1] = " << argv[1] << endl;
+        strcpy(msg, argv[1]);
+    }
+    else strcpy(msg, "ligar lampada 01");
 
     tamanhoMensagem = strlen(msg);
 
@@ -52,7 +59,7 @@ int main(){
 
     totalBytesRecebidos = 0;
     while(totalBytesRecebidos < tamanhoMensagem){
-        if((bytesRecebidos = recv(clienteSocket, buffer, BUFFER_SIZE, 0)) <= 0){
+        if((bytesRecebidos = recv(clienteSocket, buffer, BUFFER_SIZE, 0)) < 0){
             perror("erro ao receber");
             exit(EXIT_FAILURE);
         }
