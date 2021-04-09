@@ -1,31 +1,36 @@
 #include <iostream>
+#include "central_socket.h"
 
 using namespace std;
 
 void requisitar_ligar_equipamento(int comando){
     switch (comando){
+    case 0:
+        requestToServer("exit");
+        break;
     case 1:
-        cout << "Você escolheu 1\n";
+        requestToServer("ligar lampada 01");
         break;
 
     case 2:
-        cout << "Você escolheu 2\n";
+        requestToServer("ligar lampada 02");
         break;
 
     case 3:
-        cout << "Você escolheu 3\n";
+        requestToServer("ligar lampada 03");
         break;
 
     case 4:
-        cout << "Você escolheu 4\n";
+        requestToServer("ligar lampada 04");
         break;
     
     default:
+        cout << "comando inválido! tente novamente\n";
         break;
     }
 }
 
-int menu(){
+void menu(){
     cout << "---------------------------\n";
 
     cout << "Bem vindo. Escolha uma das opções abaixo:\n";
@@ -33,8 +38,11 @@ int menu(){
     cout << "2. Ligar lampada 2\n";
     cout << "3. Ligar lampada 3\n";
     cout << "4. Ligar lampada 4\n";
+    cout << "0. Sair\n";
+}
 
-    cout << ">";
+int getUserInput(){
+    cout << "> ";
 
     int option;
     cin >> option;
@@ -43,8 +51,12 @@ int menu(){
 
 int main(){
 
-    int comando = menu();
-    requisitar_ligar_equipamento(comando);
+    menu();
+
+    while(1){
+        int comando = getUserInput();
+        requisitar_ligar_equipamento(comando);
+    }
 
     return 0;
 }
