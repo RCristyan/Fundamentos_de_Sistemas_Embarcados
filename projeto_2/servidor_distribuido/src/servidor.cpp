@@ -34,7 +34,7 @@ void closeServer(int signal){
 
 void handleRequisiton(){
     if(strcmp(buffer, "exit") == 0) closeServer(SIGINT);
-    else if(strcmp(buffer, "ligar lampada 01") == 0 || strcmp(buffer, "01") == 0){
+    else if(strcmp(buffer, "ligar lampada 01") == 0 || strcmp(buffer, "L01") == 0){
         cout << "ligando...\n";
         ligar_dispositivo(LAMPADA_1_COZINHA);
         sleep(3);
@@ -42,7 +42,7 @@ void handleRequisiton(){
         strcpy(server_response, "lampada 01 ligada");
         cout << "lampada 01 ligada\n";
     }
-    else if(strcmp(buffer, "ligar lampada 02") == 0 || strcmp(buffer, "02") == 0){
+    else if(strcmp(buffer, "ligar lampada 02") == 0 || strcmp(buffer, "L02") == 0){
         cout << "ligando...\n";
         ligar_dispositivo(LAMPADA_2_SALA);
         sleep(3);
@@ -50,7 +50,7 @@ void handleRequisiton(){
         strcpy(server_response, "lampada 02 ligada");
         cout << "lampada 02 ligada\n";
     }
-    else if(strcmp(buffer, "ligar lampada 03") == 0 || strcmp(buffer, "03") == 0){
+    else if(strcmp(buffer, "ligar lampada 03") == 0 || strcmp(buffer, "L03") == 0){
         cout << "ligando...\n";
         ligar_dispositivo(LAMPADA_3_QUARTO_1);
         sleep(3);
@@ -58,13 +58,29 @@ void handleRequisiton(){
         strcpy(server_response, "lampada 03 ligada");
         cout << "lampada 03 ligada\n";
     }
-    else if(strcmp(buffer, "ligar lampada 04") == 0 || strcmp(buffer, "04") == 0){
+    else if(strcmp(buffer, "ligar lampada 04") == 0 || strcmp(buffer, "L04") == 0){
         cout << "ligando...\n";
         ligar_dispositivo(LAMPADA_4_QUARTO_2);
         sleep(3);
         desligar_dispositivo(LAMPADA_4_QUARTO_2);
         strcpy(server_response, "lampada 04 ligada");
         cout << "lampada 04 ligada\n";
+    }
+    else if(strcmp(buffer, "ligar ar condicionado 01") == 0 || strcmp(buffer, "A01") == 0){
+        cout << "ligando...\n";
+        ligar_dispositivo(AR_CONDICIONADO_1_QUARTO_1);
+        sleep(3);
+        desligar_dispositivo(AR_CONDICIONADO_1_QUARTO_1);
+        strcpy(server_response, "ar condicionado 01 ligado");
+        cout << "ar condicionado 01 ligado\n";
+    }
+    else if(strcmp(buffer, "ligar ar condicionado 02") == 0 || strcmp(buffer, "A02") == 0){
+        cout << "ligando...\n";
+        ligar_dispositivo(AR_CONDICIONADO_2_QUARTO_2);
+        sleep(3);
+        desligar_dispositivo(AR_CONDICIONADO_2_QUARTO_2);
+        strcpy(server_response, "ar condicionado 02 ligado");
+        cout << "ar condicionado 02 ligado\n";
     }
     else{
         strcpy(server_response, "comando não reconhecido");

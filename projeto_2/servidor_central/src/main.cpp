@@ -24,6 +24,14 @@ void requisitar_ligar_equipamento(int comando){
         requestToServer("ligar lampada 04");
         break;
     
+    case 5:
+        requestToServer("ligar ar condicionado 01");
+        break;
+    
+    case 6:
+        requestToServer("ligar ar condicionado 02");
+        break;
+    
     default:
         cout << "comando inválido! tente novamente\n";
         break;
@@ -38,6 +46,8 @@ void menu(){
     cout << "2. Ligar lampada 2\n";
     cout << "3. Ligar lampada 3\n";
     cout << "4. Ligar lampada 4\n";
+    cout << "5. Ligar ar condicionado 1\n";
+    cout << "6. Ligar ar condicionado 2\n";
     cout << "0. Sair\n";
 }
 
