@@ -32,6 +32,30 @@ void requisitar_ligar_equipamento(int comando){
         requestToServer("ligar ar condicionado 02");
         break;
     
+    case 7:
+        requestToServer("desligar lampada 01");
+        break;
+    
+    case 8:
+        requestToServer("desligar lampada 02");
+        break;
+    
+    case 9:
+        requestToServer("desligar lampada 03");
+        break;
+    
+    case 10:
+        requestToServer("desligar lampada 04");
+        break;
+    
+    case 11:
+        requestToServer("desligar ar condicionado 01");
+        break;
+    
+    case 12:
+        requestToServer("desligar ar condicionado 02");
+        break;
+
     default:
         cout << "comando inválido! tente novamente\n";
         break;
@@ -42,12 +66,24 @@ void menu(){
     cout << "---------------------------\n";
 
     cout << "Bem vindo. Escolha uma das opções abaixo:\n";
-    cout << "1. Ligar lampada 1\n";
-    cout << "2. Ligar lampada 2\n";
-    cout << "3. Ligar lampada 3\n";
-    cout << "4. Ligar lampada 4\n";
-    cout << "5. Ligar ar condicionado 1\n";
-    cout << "6. Ligar ar condicionado 2\n";
+    cout << "1.  Ligar lampada 1\n";
+    cout << "2.  Ligar lampada 2\n";
+    cout << "3.  Ligar lampada 3\n";
+    cout << "4.  Ligar lampada 4\n";
+    cout << "5.  Ligar ar condicionado 1\n";
+    cout << "6.  Ligar ar condicionado 2\n";
+    
+    cout << endl;
+    
+    cout << "7.  Desligar lampada 1\n";
+    cout << "8.  Desligar lampada 2\n";
+    cout << "9.  Desligar lampada 3\n";
+    cout << "10. Desligar lampada 4\n";
+    cout << "11. Desligar ar condicionado 1\n";
+    cout << "12. Desligar ar condicionado 2\n";
+
+    cout << endl;
+    
     cout << "0. Sair\n";
 }
 
