@@ -5,6 +5,7 @@
 #include <thread>
 #include <signal.h>
 #include "servidor.h"
+#include "temperature_reading_client.h"
 
 extern "C"{
     #include "i2c_read_bme280.h"
@@ -31,14 +32,20 @@ void socket_thread(){
     waitRequest();
 }
 
+void socket_temperature_update(){
+    sendTemperatureReadingsToServer();
+}
+
 int main(){
-    setupServer();
+    
+    socket_temperature_update();
+    // setupServer();
 
-    thread socket_listener(socket_thread);
+    // thread socket_listener(socket_thread);
 
-    cout << "Rodando na main\n";
+    // cout << "Rodando na main\n";
 
-    socket_listener.join();
+    // socket_listener.join();
 
     return 0;
 }

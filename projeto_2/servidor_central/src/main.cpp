@@ -1,5 +1,6 @@
 #include <iostream>
 #include "central_socket.h"
+#include "server_temperature_socket.h"
 
 using namespace std;
 
@@ -97,12 +98,15 @@ int getUserInput(){
 
 int main(){
 
-    menu();
+    setupServer();
+    waitRequest();
 
-    while(1){
-        int comando = getUserInput();
-        requisitar_ligar_equipamento(comando);
-    }
+    // menu();
+
+    // while(1){
+    //     int comando = getUserInput();
+    //     requisitar_ligar_equipamento(comando);
+    // }
 
     return 0;
 }
