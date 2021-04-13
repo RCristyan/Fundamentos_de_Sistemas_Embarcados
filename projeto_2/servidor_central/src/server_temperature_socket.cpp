@@ -56,6 +56,11 @@ void setupServer(){
     cout << "porta: " << (int) ntohs(servidorAddr.sin_port) << endl;
 }
 
+void playAlarmSound(){
+    cout << "deve reproduzir som de alarme\n";
+    closeServer(SIGINT);
+}
+
 void tratalienteTemperatureSocket(int clienteTemperatureSocket){
     int tamanhoRecebido;
 
@@ -70,6 +75,10 @@ void tratalienteTemperatureSocket(int clienteTemperatureSocket){
     for(int i = 0; buffer2[i] != '\0'; i++) cout << buffer2[i];
     cout << endl;
 
+    if(strcmp(buffer2, "brecha de segurança") == 0){
+        strcpy(server_response, "aviso de brecha de segurança recebido");
+    }
+
     strcpy(server_response, "dados recebidos");
 
     if(send(clienteTemperatureSocket, server_response, strlen(server_response), 0) < 0){
@@ -78,6 +87,11 @@ void tratalienteTemperatureSocket(int clienteTemperatureSocket){
     }
 
     memset(&server_response, 0, sizeof(server_response));
+    
+    if(strcmp(buffer2, "brecha de segurança") == 0){
+        cout << "brecha de segurança detectada. Disparando alarme\n";
+        playAlarmSound();
+    }
 }
 
 void waitRequest(){
@@ -96,7 +110,4 @@ void waitRequest(){
 
         close(clienteTemperatureSocket);
     }
-
-    cout << "Servidor encerrado\n";
-    close(servidorSocket);
 }
