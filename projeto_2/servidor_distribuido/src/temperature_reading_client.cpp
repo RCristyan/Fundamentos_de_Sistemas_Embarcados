@@ -4,13 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <csignal>
+
+#include "gpio_control.h"
 
 extern "C"{
     #include "i2c_read_bme280.h"
 }
 
 #define PORTA_SERVIDOR 10023
-#define IP_SERVIDOR "192.168.0.53"
+#define IP_SERVIDOR "192.168.0.4"
 #define BUFFER_SIZE 50
 
 using namespace std;
@@ -18,13 +21,15 @@ using namespace std;
 int clienteTemperatureSocket;
 char buffer2[BUFFER_SIZE];
 
-void exitProgram(){
-    cout << "Encerrando programa...\n";
+void exitProgram(int signal){
+    cout << "Encerrando socket de dados de temperatura...\n";
     close(clienteTemperatureSocket);
     exit(EXIT_SUCCESS);
 }
 
 void setupClienteSocket(){
+    signal(SIGINT, exitProgram);
+
     if((clienteTemperatureSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0){
         perror("erro no socket");
         exit(EXIT_FAILURE);
@@ -52,7 +57,7 @@ void sendRequest(const char* request){
         exit(EXIT_FAILURE);
     }
 
-    if(strcmp(request, "exit") == 0) exitProgram();
+    if(strcmp(request, "exit") == 0) exitProgram(SIGINT);
 }
 
 char* getServerResponse(){
@@ -75,8 +80,6 @@ char* getServerResponse(){
 }
 
 void sendTemperatureReadingsToServer(){
-    setupBME280();
-
     while(1){
     setupClienteSocket();
     float t, p, u;
@@ -91,7 +94,6 @@ void sendTemperatureReadingsToServer(){
         gcvt(p, 4, p_buffer);
         gcvt(u, 4, u_buffer);
 
-        // cout << "T: " << t << ", P: " << p << ", U: " << u << endl;
         char reading[50];
         memset(&reading, 0, sizeof(reading));
         strcat(reading, "Temperatura: ");
@@ -102,11 +104,9 @@ void sendTemperatureReadingsToServer(){
         strcat(reading, u_buffer);
         strcat(reading, "\0");
 
-        // enviar a string reading (sem '\0')
         cout << "reading: \n\t" << reading << endl;
 
-        unsigned int tamanhoMensagem;
-        tamanhoMensagem = strlen(reading);
+        unsigned int tamanhoMensagem = strlen(reading);
 
         cout << "enviando comando: " << reading << endl;
         if(send(clienteTemperatureSocket, reading, tamanhoMensagem, 0) != tamanhoMensagem){
@@ -121,4 +121,21 @@ void sendTemperatureReadingsToServer(){
 
         close(clienteTemperatureSocket);
     }
+}
+
+void triggerAlarm(){}
+
+void checkForPerimeterBreach(){
+    int i = 0;
+    while(true){
+        if(perimeter_breach()){
+            cout << "um dos sensores foi ativado!\n";
+            
+            triggerAlarm();
+        }
+
+        usleep(1000000);
+    }
+
+    cout << "brecha de segurança detectada!\n";
 }

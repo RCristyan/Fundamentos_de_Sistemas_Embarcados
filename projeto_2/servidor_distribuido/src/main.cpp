@@ -6,6 +6,7 @@
 #include <signal.h>
 #include "servidor.h"
 #include "temperature_reading_client.h"
+#include "gpio_control.h"
 
 extern "C"{
     #include "i2c_read_bme280.h"
@@ -36,9 +37,19 @@ void socket_temperature_update(){
     sendTemperatureReadingsToServer();
 }
 
+void socket_check_perimeter_breach(){
+    cout << "checkando por brecha no perimetro\n";
+    checkForPerimeterBreach();
+}
+
 int main(){
+    gpio_control_setup();
+
+    // socket_temperature_update();
     
-    socket_temperature_update();
+    thread perimeter_observer(socket_check_perimeter_breach);
+    perimeter_observer.join();
+
     // setupServer();
 
     // thread socket_listener(socket_thread);

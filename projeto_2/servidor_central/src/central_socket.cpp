@@ -7,7 +7,7 @@
 #include "central_socket.h"
 
 #define PORTA_SERVIDOR 10123
-#define IP_SERVIDOR "192.168.0.52"
+#define IP_SERVIDOR "192.168.0.4"
 #define BUFFER_SIZE 50
 
 using namespace std;
@@ -48,6 +48,7 @@ void sendRequest(const char* request){
         perror("erro ao enviar mensagem");
         exit(EXIT_FAILURE);
     }
+    cout << "comando enviado\n";
 
     if(strcmp(request, "exit") == 0) exitProgram();
 }

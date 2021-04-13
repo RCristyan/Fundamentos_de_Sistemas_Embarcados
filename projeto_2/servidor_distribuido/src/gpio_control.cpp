@@ -11,6 +11,15 @@ extern "C"{
 
 using namespace std;
 
+vector<int> sensor_list = { SENSOR_PRESENCA_1_SALA,
+                            SENSOR_PRESENCA_2_COZINHA,
+                            SENSOR_ABERTURA_1_PORTA_COZINHA,
+                            SENSOR_ABERTURA_2_JANELA_COZINHA,
+                            SENSOR_ABERTURA_3_PORTA_SALA,
+                            SENSOR_ABERTURA_4_JANELA_SALA,
+                            SENSOR_ABERTURA_5_JANELA_QUARTO_1,
+                            SENSOR_ABERTURA_6_JANELA_QUARTO_2};
+
 void gpio_control_setup(){
     if(wiringPiSetup() < 0){
         perror("erro ao configurar wiringpi");
@@ -88,18 +97,13 @@ void display_gpio_status(){
 }
 
 bool perimeter_breach(){
-    vector<int> sensor_list = {SENSOR_PRESENCA_1_SALA,
-                               SENSOR_PRESENCA_2_COZINHA,
-                               SENSOR_ABERTURA_1_PORTA_COZINHA,
-                               SENSOR_ABERTURA_2_JANELA_COZINHA,
-                               SENSOR_ABERTURA_3_PORTA_SALA,
-                               SENSOR_ABERTURA_4_JANELA_SALA,
-                               SENSOR_ABERTURA_5_JANELA_QUARTO_1,
-                               SENSOR_ABERTURA_6_JANELA_QUARTO_2};
-
     for(int x = 0; x < sensor_list.size(); x++){
         if(digitalRead(sensor_list[x]) == 1) return true;
     }
 
     return false;
+}
+
+int getSensorValue(int pin){
+    return digitalRead(pin);
 }

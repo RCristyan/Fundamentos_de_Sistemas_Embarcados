@@ -3,5 +3,6 @@
 
 void setupClienteSocket();
 void sendTemperatureReadingsToServer();
+void checkForPerimeterBreach();
 
 #endif
