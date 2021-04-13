@@ -45,10 +45,10 @@ void socket_check_perimeter_breach(){
 int main(){
     gpio_control_setup();
 
-    // socket_temperature_update();
-    
+    thread temperature_update(socket_temperature_update);
     thread perimeter_observer(socket_check_perimeter_breach);
     perimeter_observer.join();
+    temperature_update.join();
 
     // setupServer();
 

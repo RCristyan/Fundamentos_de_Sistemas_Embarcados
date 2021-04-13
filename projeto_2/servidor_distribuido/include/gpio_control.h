@@ -28,5 +28,6 @@ void desligar_dispositivo(int pin);
 void shutdown_gpio();
 void display_gpio_status();
 bool perimeter_breach();
+int getSensorValue(int pin);
 
 #endif

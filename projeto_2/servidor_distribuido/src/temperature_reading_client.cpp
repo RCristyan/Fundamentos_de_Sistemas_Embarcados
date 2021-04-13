@@ -5,15 +5,17 @@
 #include <string.h>
 #include <unistd.h>
 #include <csignal>
+#include <vector>
 
 #include "gpio_control.h"
 
 extern "C"{
     #include "i2c_read_bme280.h"
+    #include "wiringPi.h"
 }
 
 #define PORTA_SERVIDOR 10023
-#define IP_SERVIDOR "192.168.0.4"
+#define IP_SERVIDOR "192.168.0.53"
 #define BUFFER_SIZE 50
 
 using namespace std;
@@ -80,13 +82,15 @@ char* getServerResponse(){
 }
 
 void sendTemperatureReadingsToServer(){
+    setupBME280();
     while(1){
-    setupClienteSocket();
-    float t, p, u;
+        setupClienteSocket();
+        float t, p, u;
 
         t = get_BME280_reading('t');
         p = get_BME280_reading('p');
         u = get_BME280_reading('u');
+
         char t_buffer[6];
         char p_buffer[6];
         char u_buffer[6];
@@ -123,19 +127,17 @@ void sendTemperatureReadingsToServer(){
     }
 }
 
-void triggerAlarm(){}
+void raiseAlarm(){
+    cout << "alarm raised here\n";
+}
 
 void checkForPerimeterBreach(){
-    int i = 0;
-    while(true){
-        if(perimeter_breach()){
-            cout << "um dos sensores foi ativado!\n";
-            
-            triggerAlarm();
-        }
-
-        usleep(1000000);
-    }
-
-    cout << "brecha de segurança detectada!\n";
+    wiringPiISR(SENSOR_ABERTURA_1_PORTA_COZINHA, INT_EDGE_RISING, &raiseAlarm);
+    wiringPiISR(SENSOR_ABERTURA_2_JANELA_COZINHA, INT_EDGE_RISING, &raiseAlarm);
+    wiringPiISR(SENSOR_ABERTURA_3_PORTA_SALA, INT_EDGE_RISING, &raiseAlarm);
+    wiringPiISR(SENSOR_ABERTURA_4_JANELA_SALA, INT_EDGE_RISING, &raiseAlarm);
+    wiringPiISR(SENSOR_ABERTURA_5_JANELA_QUARTO_1, INT_EDGE_RISING, &raiseAlarm);
+    wiringPiISR(SENSOR_ABERTURA_6_JANELA_QUARTO_2, INT_EDGE_RISING, &raiseAlarm);
+    wiringPiISR(SENSOR_PRESENCA_1_SALA, INT_EDGE_RISING, &raiseAlarm);
+    wiringPiISR(SENSOR_PRESENCA_2_COZINHA, INT_EDGE_RISING, &raiseAlarm);   
 }
