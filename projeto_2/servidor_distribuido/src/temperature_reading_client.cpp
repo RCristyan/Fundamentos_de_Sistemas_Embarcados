@@ -22,6 +22,7 @@ using namespace std;
 
 int clienteTemperatureSocket;
 char buffer2[BUFFER_SIZE];
+bool triggerAlarm = false;
 
 void exitProgram(int signal){
     cout << "Encerrando socket de dados de temperatura...\n";
@@ -81,32 +82,46 @@ char* getServerResponse(){
     return response;
 }
 
+void raiseAlarm(){
+    cout << "alarm raised here\n";
+    triggerAlarm = true;
+}
+
 void sendTemperatureReadingsToServer(){
     setupBME280();
+    bool brk = false;
     while(1){
+        if(brk) break;
         setupClienteSocket();
         float t, p, u;
-
-        t = get_BME280_reading('t');
-        p = get_BME280_reading('p');
-        u = get_BME280_reading('u');
-
-        char t_buffer[6];
-        char p_buffer[6];
-        char u_buffer[6];
-        gcvt(t, 4, t_buffer);
-        gcvt(p, 4, p_buffer);
-        gcvt(u, 4, u_buffer);
-
         char reading[50];
         memset(&reading, 0, sizeof(reading));
-        strcat(reading, "Temperatura: ");
-        strcat(reading, t_buffer);
-        strcat(reading, ", Pressão: ");
-        strcat(reading, p_buffer);
-        strcat(reading, ", Umidade: ");
-        strcat(reading, u_buffer);
-        strcat(reading, "\0");
+
+        if(triggerAlarm){
+            strcat(reading, "Brecha de segurança");
+            brk = true;
+        }
+        else{
+            t = get_BME280_reading('t');
+            p = get_BME280_reading('p');
+            u = get_BME280_reading('u');
+
+            char t_buffer[6];
+            char p_buffer[6];
+            char u_buffer[6];
+            gcvt(t, 4, t_buffer);
+            gcvt(p, 4, p_buffer);
+            gcvt(u, 4, u_buffer);
+
+            
+            strcat(reading, "Temperatura: ");
+            strcat(reading, t_buffer);
+            strcat(reading, ", Pressão: ");
+            strcat(reading, p_buffer);
+            strcat(reading, ", Umidade: ");
+            strcat(reading, u_buffer);
+            strcat(reading, "\0");
+        }
 
         cout << "reading: \n\t" << reading << endl;
 
@@ -125,10 +140,6 @@ void sendTemperatureReadingsToServer(){
 
         close(clienteTemperatureSocket);
     }
-}
-
-void raiseAlarm(){
-    cout << "alarm raised here\n";
 }
 
 void checkForPerimeterBreach(){

@@ -34,20 +34,14 @@ void socket_thread(){
 }
 
 void socket_temperature_update(){
-    sendTemperatureReadingsToServer();
-}
-
-void socket_check_perimeter_breach(){
-    cout << "checkando por brecha no perimetro\n";
     checkForPerimeterBreach();
+    sendTemperatureReadingsToServer();
 }
 
 int main(){
     gpio_control_setup();
 
     thread temperature_update(socket_temperature_update);
-    thread perimeter_observer(socket_check_perimeter_breach);
-    perimeter_observer.join();
     temperature_update.join();
 
     // setupServer();
