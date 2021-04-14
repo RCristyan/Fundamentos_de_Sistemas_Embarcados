@@ -3,5 +3,7 @@
 
 void setupServer();
 void waitRequest();
+void setStopPrinting(bool value);
+bool getStopPrinting();
 
 #endif

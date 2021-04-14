@@ -6,7 +6,7 @@ run: executable
 	./executable
 
 executable: main central_socket server_temperature_socket
-	g++ $(OBJECT_PATH)*.o -o executable
+	g++ $(OBJECT_PATH)*.o -o executable -lpthread
 
 main: $(SRC_PATH)main.cpp
 	g++ $(INCLUDE_PATH) -c $(SRC_PATH)main.cpp -o $(OBJECT_PATH)main.o

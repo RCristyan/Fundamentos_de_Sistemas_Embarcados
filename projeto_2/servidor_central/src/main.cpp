@@ -1,4 +1,6 @@
 #include <iostream>
+#include <csignal>
+#include <thread>
 #include "central_socket.h"
 #include "server_temperature_socket.h"
 
@@ -96,19 +98,28 @@ int getUserInput(){
     return option;
 }
 
+void requests(){
+    waitRequest();
+}
+
+void handleUserRequisition(int signal){
+    setStopPrinting(true);
+
+    menu();
+
+    int comando = getUserInput();
+    requisitar_ligar_equipamento(comando);
+
+    setStopPrinting(false);
+}
+
 int main(){
 
+    signal(SIGQUIT, handleUserRequisition);
+
     setupServer();
-    waitRequest();
-
-    //setupClienteSocket();
-
-    // menu();
-
-    // while(1){
-    //      int comando = getUserInput();
-    //      requisitar_ligar_equipamento(comando);
-    // }
+    thread request_listener(requests);
+    request_listener.join();
 
     return 0;
 }

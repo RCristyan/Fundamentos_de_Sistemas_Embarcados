@@ -7,6 +7,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
+#include "server_temperature_socket.h"
+
 #define PORTA_SERVIDOR 10023
 #define BUFFER_SIZE 50
 
@@ -19,6 +21,15 @@ struct sockaddr_in clienteAddr;
 unsigned int clienteLength;
 char buffer2[BUFFER_SIZE];
 char server_response[50];
+bool stop_printing = false;
+
+void setStopPrinting(bool value){
+    stop_printing = value;
+}
+
+bool getStopPrinting(){
+    return stop_printing;
+}
 
 void closeServer(int signal){
     cout << "\nEncerrando servidor...\n";
@@ -71,9 +82,11 @@ void tratalienteTemperatureSocket(int clienteTemperatureSocket){
 
     buffer2[tamanhoRecebido] = '\0';
 
-    cout << "Servidor recebeu: ";
-    for(int i = 0; buffer2[i] != '\0'; i++) cout << buffer2[i];
-    cout << endl;
+    // cout << "Servidor recebeu: ";
+    if(!stop_printing){
+        for(int i = 0; buffer2[i] != '\0'; i++) cout << buffer2[i];
+        cout << endl;
+    }
 
     if(strcmp(buffer2, "brecha de segurança") == 0){
         strcpy(server_response, "aviso de brecha de segurança recebido");
@@ -104,7 +117,7 @@ void waitRequest(){
             exit(EXIT_FAILURE);
         }
 
-        cout << "conexão do cliente " << inet_ntoa(clienteAddr.sin_addr) << endl;
+        // cout << "conexão do cliente " << inet_ntoa(clienteAddr.sin_addr) << endl;
 
         tratalienteTemperatureSocket(clienteTemperatureSocket);
 
