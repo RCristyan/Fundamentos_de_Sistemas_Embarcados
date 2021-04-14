@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <thread>
-#include <signal.h>
 #include "servidor.h"
 #include "temperature_reading_client.h"
 #include "gpio_control.h"
@@ -39,18 +38,13 @@ void socket_temperature_update(){
 }
 
 int main(){
+    setupServer();
     gpio_control_setup();
 
+    thread socket_listener(socket_thread);
     thread temperature_update(socket_temperature_update);
     temperature_update.join();
-
-    // setupServer();
-
-    // thread socket_listener(socket_thread);
-
-    // cout << "Rodando na main\n";
-
-    // socket_listener.join();
+    socket_listener.join();
 
     return 0;
 }

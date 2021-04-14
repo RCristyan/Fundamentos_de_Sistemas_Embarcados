@@ -98,7 +98,7 @@ void sendTemperatureReadingsToServer(){
         memset(&reading, 0, sizeof(reading));
 
         if(triggerAlarm){
-            strcat(reading, "Brecha de segurança");
+            strcat(reading, "brecha de segurança");
             brk = true;
         }
         else{
@@ -123,11 +123,11 @@ void sendTemperatureReadingsToServer(){
             strcat(reading, "\0");
         }
 
-        cout << "reading: \n\t" << reading << endl;
+        // cout << "reading: \n\t" << reading << endl;
 
         unsigned int tamanhoMensagem = strlen(reading);
 
-        cout << "enviando comando: " << reading << endl;
+        // cout << "enviando comando: " << reading << endl;
         if(send(clienteTemperatureSocket, reading, tamanhoMensagem, 0) != tamanhoMensagem){
              perror("erro ao enviar mensagem");
              exit(EXIT_FAILURE);
