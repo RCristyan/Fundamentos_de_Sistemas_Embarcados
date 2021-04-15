@@ -4,7 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <csignal>
 #include "central_socket.h"
+#include "server_temperature_socket.h"
 
 #define PORTA_SERVIDOR 10123
 #define IP_SERVIDOR "192.168.0.4"
@@ -16,8 +18,9 @@ int clienteSocket;
 char buffer[BUFFER_SIZE];
 
 void exitProgram(){
-    cout << "Encerrando programa...\n";
     close(clienteSocket);
+    closeTemperatureSocket(SIGINT);
+    cout << "Encerrando programa...\n";
     exit(EXIT_SUCCESS);
 }
 

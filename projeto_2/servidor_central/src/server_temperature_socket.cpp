@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 
 #include "server_temperature_socket.h"
+#include "logger.h"
 
 #define PORTA_SERVIDOR 10023
 #define BUFFER_SIZE 50
@@ -31,7 +32,7 @@ bool getStopPrinting(){
     return stop_printing;
 }
 
-void closeServer(int signal){
+void closeTemperatureSocket(int signal){
     cout << "\nEncerrando servidor...\n";
 
     close(clienteTemperatureSocket);
@@ -40,7 +41,8 @@ void closeServer(int signal){
 }
 
 void setupServer(){
-    signal(SIGINT, closeServer);
+    signal(SIGINT, closeTemperatureSocket);
+    createLogFile();
 
     if((servidorSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0){
         perror("falha no socket do servidor");
@@ -69,7 +71,7 @@ void setupServer(){
 
 void playAlarmSound(){
     cout << "deve reproduzir som de alarme\n";
-    closeServer(SIGINT);
+    closeTemperatureSocket(SIGINT);
 }
 
 void tratalienteTemperatureSocket(int clienteTemperatureSocket){
@@ -87,6 +89,7 @@ void tratalienteTemperatureSocket(int clienteTemperatureSocket){
         for(int i = 0; buffer2[i] != '\0'; i++) cout << buffer2[i];
         cout << endl;
     }
+    appendToLogFile(buffer2);
 
     if(strcmp(buffer2, "brecha de segurança") == 0){
         strcpy(server_response, "aviso de brecha de segurança recebido");

@@ -5,5 +5,6 @@ void setupServer();
 void waitRequest();
 void setStopPrinting(bool value);
 bool getStopPrinting();
+void closeTemperatureSocket(int signal);
 
 #endif
