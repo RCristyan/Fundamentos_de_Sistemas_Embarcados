@@ -5,7 +5,7 @@ INCLUDE_PATH?=-I./include
 run: executable
 	./executable
 
-executable: main central_socket server_temperature_socket
+executable: main central_socket server_temperature_socket logger
 	g++ $(OBJECT_PATH)*.o -o executable -lpthread
 
 main: $(SRC_PATH)main.cpp
@@ -16,6 +16,9 @@ central_socket: $(SRC_PATH)central_socket.cpp
 
 server_temperature_socket: $(SRC_PATH)server_temperature_socket.cpp
 	g++ $(INCLUDE_PATH) -c $(SRC_PATH)server_temperature_socket.cpp -o $(OBJECT_PATH)server_temperature_socket.o
+
+logger: $(SRC_PATH)logger.cpp
+	g++ $(INCLUDE_PATH) -c $(SRC_PATH)logger.cpp -o $(OBJECT_PATH)logger.o
 
 clean:
 	rm $(OBJECT_PATH)*.o

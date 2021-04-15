@@ -1,0 +1,10 @@
+T,P,U
+Temperatura: 28.72, Pressão: 898.3, Umidade: 40.6
+Temperatura: 28.74, Pressão: 898.3, Umidade: 40.6
+Temperatura: 28.73, Pressão: 898.3, Umidade: 40.6
+Temperatura: 28.73, Pressão: 898.3, Umidade: 40.6
+Temperatura: 28.73, Pressão: 898.3, Umidade: 40.6
+Temperatura: 28.73, Pressão: 898.3, Umidade: 40.6
+Temperatura: 28.74, Pressão: 898.3, Umidade: 40.6
+Temperatura: 28.75, Pressão: 898.3, Umidade: 40.6
+Temperatura: 28.75, Pressão: 898.3, Umidade: 40.6

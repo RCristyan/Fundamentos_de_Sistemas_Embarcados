@@ -3,6 +3,7 @@
 #include <thread>
 #include "central_socket.h"
 #include "server_temperature_socket.h"
+#include "logger.h"
 
 using namespace std;
 
@@ -66,7 +67,7 @@ void requisitar_ligar_equipamento(int comando){
 }
 
 void menu(){
-    cout << "---------------------------\n";
+    cout << "\n---------------------------\n";
 
     cout << "Bem vindo. Escolha uma das opções abaixo:\n";
     cout << "1.  Ligar lampada 1\n";
