@@ -11,53 +11,67 @@ void requisitar_ligar_equipamento(int comando){
     switch (comando){
     case 0:
         requestToServer("exit");
+        appendToLogFile("Central requisitou exit");
+        closeLogFile();
         break;
     case 1:
         requestToServer("ligar lampada 01");
+        appendToLogFile("Central requisitou ligar lampada 01");
         break;
 
     case 2:
         requestToServer("ligar lampada 02");
+        appendToLogFile("Central requisitou ligar lampada 02");
         break;
 
     case 3:
         requestToServer("ligar lampada 03");
+        appendToLogFile("Central requisitou ligar lampada 03");
         break;
 
     case 4:
         requestToServer("ligar lampada 04");
+        appendToLogFile("Central requisitou ligar lampada 04");
         break;
     
     case 5:
         requestToServer("ligar ar condicionado 01");
+        appendToLogFile("Central requisitou ligar ar condicionado 01");
         break;
     
     case 6:
         requestToServer("ligar ar condicionado 02");
+        appendToLogFile("Central requisitou ligar ar condicionado 02");
         break;
     
     case 7:
         requestToServer("desligar lampada 01");
+        appendToLogFile("Central requisitou desligar lampada 01");
         break;
     
     case 8:
         requestToServer("desligar lampada 02");
+        appendToLogFile("Central requisitou desligar lampada 02");
         break;
     
     case 9:
         requestToServer("desligar lampada 03");
+        appendToLogFile("Central requisitou desligar lampada 03");
         break;
     
     case 10:
         requestToServer("desligar lampada 04");
+        appendToLogFile("Central requisitou desligar lampada 04");
         break;
     
     case 11:
         requestToServer("desligar ar condicionado 01");
+        appendToLogFile("Central requisitou desligar ar condicionado 01");
         break;
     
     case 12:
         requestToServer("desligar ar condicionado 02");
+        appendToLogFile("Central requisitou desligar ar condicionado 02");
         break;
 
     default:
@@ -116,6 +130,7 @@ void handleUserRequisition(int signal){
 
 int main(){
 
+    createLogFile();
     signal(SIGQUIT, handleUserRequisition);
 
     setupServer();
