@@ -69,6 +69,7 @@ void setupServer(){
 
 void playAlarmSound(){
     cout << "deve reproduzir som de alarme\n";
+    system("omxplayer ./utils/alarm_clock.mp3 > /dev/null");
     closeTemperatureSocket(SIGINT);
 }
 
