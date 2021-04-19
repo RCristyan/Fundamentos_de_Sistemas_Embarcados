@@ -21,6 +21,6 @@ Para executar o programa, compile e rode primeiramente o código do servidor cen
 
 Logo após, compile e rode o código do servidor distribuido
 ```
-    cd ../servidor_distribuido
+    cd servidor_distribuido
     make run
 ```
